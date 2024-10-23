@@ -1,0 +1,7 @@
+2024-10-23T12:51:44.482 - Initialization Finished.
+2024-10-23T12:51:44.482 - Beginning Equillibration.
+2024-10-23T12:51:48.235 - Equillibration Finished.
+2024-10-23T12:51:48.235 - Beginning Main Anneal.
+2024-10-23T12:53:19.870 - Main Anneal Finished.
+2024-10-23T12:53:19.886 - Beginning Final Anneal.
+2024-10-23T12:54:46.577 - Final Anneal Finished.
