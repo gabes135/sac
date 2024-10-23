@@ -3,7 +3,7 @@ Currently only supports unconstrained sampling for fermionic spectral functions.
 
 ## Step 1: Prepare G(tau) data
 
-To run the sac_free.jl, you first need to generate a t.in file containing the covariance matrix for your G(tau) data. This is done using make_tin.jl, which reads in a complete list of G(tau) bins. The two input files for make_tin.jl are cor.dat and tgrid.dat (see examples of these files in the exampels folder).
+To run the sac_free.jl, you first need to generate a t.in file containing the covariance matrix for your G(tau) data. This is done using make_tin.jl, which reads in a complete list of G(tau) bins. The two input files for make_tin.jl are cor.dat and tgrid.dat (see examples of these files in the exampels folder). **Note: you need to edit the inverse temperature set in the `run` function in make_tin.jl for your specific data set**
 
 cor.dat contains the G(tau) bins. The value of G(tau_i) for each bin is listed (one value per row), and each bin is seperated by "1," which is just usd a an indicator to seperate the bins. This will look like:
 |cor.dat|

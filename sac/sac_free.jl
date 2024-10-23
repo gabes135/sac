@@ -1153,7 +1153,6 @@ function run()
             phs=phs)
 
 
-    println(sac.phs)
     ##########################################
 
     #STEP 1: Initialization
