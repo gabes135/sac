@@ -24,7 +24,7 @@ Base.@kwdef mutable struct TimeCor
     cor_file::String # Input file 2: each G(τ) bin, one G(τ) value per row
                      # Each bin should be seperated by "1"
     
-    out_file::String = "../t.in" # Output file read in by SAC program
+    out_file::String = "t.in" # Output file read in by SAC program
      
 end
 end

@@ -1,0 +1,19 @@
+80 0
+-10.0 10.0 0.005 0.00001
+0.5 0.0 0.5
+10 1.1 150 0.5
+600 10000 20
+../in_files/example.in out_files/example
+0 finiteT
+double_edge_out
+
+######################################################################
+
+1: N_e, N_c ## number of δ's in monotonic edge part of spectrum, number of δ's in continuum part of spectrum
+2: p, A_c, A_r ## power in edge singularity, (ω-ω1)^{-p}, spectral weight of continuum ∈ [0, 1), spectral weight of rightward decaying edge ∈ [0, 1]
+3: ω_0, ω_m, δω, δω_h ## lower ω bound, upper ω bound, ω spacing, ω spacing for output spec
+4: θ_0, f_anneal, N_anneal, a ## initial sampling temp, temperature reduction factor for main anneal,  Number of anneal steps, a for theta criterion for output spectrum
+5: anneal_steps, sample_steps, bins ## number of sweeps per anneal step, number of sweeps in final sampling, number of bins of anneal_steps sweeps per anneal step
+6: input_file, output folder ## prepared filed containing QMC G(τ) data, directory to write output of SAC program to|
+7: fix_edge, kernel type ## whether sample edge (0) or fix it to value (by setting fix_edge = #), which type of kernel to use when converting A(ω) to G(τ) ('zeroT' or 'finiteT')
+8: mode ## which type of edge spectrum to resolve ('single_edge', 'single_edge_out', 'double_edge_symm', 'double_edge_in')
