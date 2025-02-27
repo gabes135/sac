@@ -21,7 +21,7 @@ Set the parameters for the SAC run in `in_edge.in`. The inputs are:
 This `in_edge.in` file should be in the same directory as `sac_edge.jl`. See provided `in_edge.in` file for example parameters.
 
 
-For this verion of the program, the user must set both the *kernel type* (either zero for finite temperature) and the *mode* (which type of edge spectrum to resolve). The names of the modes and examples of the spectra they produce are shown below.
+For this verion of the program, the user must set both the *kernel type* (either zero for finite temperature) and the *mode* (which type of edge spectrum to resolve). The names of the modes and examples of the spectra they produce, using artificial spectra (black) and synthetic QMC data, are shown below (blue).
 
 `single_edge` mode:
 
