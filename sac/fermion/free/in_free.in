@@ -1,0 +1,15 @@
+2
+2000 -15. 15. 0.00001 0.01
+10 1.1 1.05 0.5 0.5
+150 500 50000
+../in_files/example.in out_files/example
+1 finiteT
+
+######################################################################
+
+1: par ## update(s) type: 1=freq, 2=freq+amp, 3=freq with non equal amps
+2: N_ω, ω_0, ω_m, δω, δω_h ## number of δ's, lower ω bound, upper ω bound, ω spacing, ω spacing for output spec
+3: θ_0, f_anneal, f_final, a1, a2 ## initial sampling temp, temperature reduction factor for main anneal, temperature reduction factor for final anneal, lowest a for theta criterion, highest a for theta criterion
+4: N_anneal, anneal_steps, sample_steps ## Number of anneal steps, number of sweeps per anneal step in main anneal, number of sweeps per anneal step in final anneal 
+6: G_file, output folder ## name of input G(tau) file, name of output file
+5: symm, kernel type ## whether to enforce A(-omega) = A(omega) (1) are sample A(omega) across the full freq. axis (0), which type of kernel to use when converting A(ω) to G(τ) ('zeroT' or 'finiteT')

@@ -1,0 +1,1 @@
+The synthetic data in this folder, the zero temperature kernel was used. 
