@@ -41,7 +41,8 @@ This will generate a t.in file in the `process_G` directory, which you can renam
 
 
 
-After generating, renaming, and moving the t.in file, navigate to the folder corresponding to the SAC paramterization you want to us (`free` or `edge`) and follow the instructions in the README.md files.
+After generating, renaming, and moving the t.in file, navigate to the folder corresponding to the SAC paramterization you want to us ([`free`](./sac/fermion/free/README.md) or [`edge`](./sac/fermion/edge/README.md)) and follow the instructions in the README.md files (follow hyperlinks above).
 
 
 
+Read more [`free`](./sac/fermion/free/README.md)
