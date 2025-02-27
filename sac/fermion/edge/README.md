@@ -24,13 +24,13 @@ This `in_edge.in` file should be in the same directory as `sac_edge.jl`. See pro
 For this verion of the program, the user must set both the *kernel type* (either zero for finite temperature) and the *mode* (which type of edge spectrum to resolve). The names of the modes and examples of the spectra they produce are shown below.
 
 `single_edge` mode:
-![single_edge](./t1.png)
+![single_edge](../../plotting/figs/t1.jpg)
 
 `double_edge_symm` mode:
-![double_edge_symm](./t2.png)
+![double_edge_symm](../../plotting/figs/t2.jpg)
 
 `double_edge_in` mode:
-![double_edge_in](./t3.png)
+![double_edge_in](../../plotting/figs/t3.jpg)
 
 ### Run SAC
 The program is run by executing:
