@@ -29,8 +29,8 @@ x_interp = np.linspace(df_R.omega.min(), -df_L.omega.min(), 1000)
 R_interp = np.interp(x_interp, df_R.omega.values, df_R.S.values)
 L_interp = np.interp(x_interp, -df_L.omega.values[::-1], df_L.S.values[::-1])
 
-plt.plot(x_interp, R_interp, alpha = 0.5, c='r')
-plt.plot(x_interp, L_interp, alpha = 0.5, c='g')
+# plt.plot(x_interp, R_interp, alpha = 0.5, c='r')
+# plt.plot(x_interp, L_interp, alpha = 0.5, c='g')
 
 plt.plot(x_interp, R_interp+L_interp, c= 'b')
 
