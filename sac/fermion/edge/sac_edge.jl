@@ -1840,7 +1840,7 @@ end
 ###########################################################################################
 # Function to run program
 ###########################################################################################
-function run(A_c_in=false, A_r_in=false,θ_1=false, θ_2=false)
+function run(A_c_in=false, A_r_in=false, p_in=false, θ_1=false, θ_2=false)
 
     in_file = readdlm("in_edge.in")
 
@@ -1854,14 +1854,19 @@ function run(A_c_in=false, A_r_in=false,θ_1=false, θ_2=false)
     fix_edge, kernel_type = in_file[7, 1], Symbol(in_file[7, 2])
     mode = Symbol(in_file[8, 1]) #single_edge, double_edge_in, double_edge_out, double_edge_symm
 
+    # Check if user has submitted parameter values (for scan)
     if A_c_in != false
         A_c = A_c_in
     end
-
     if A_r_in != false
         A_r = A_r_in
     end
-    
+
+    if p_in != false
+        p = p_in
+    end
+
+    # Set folder named based on mode
     if mode == :single_edge
         output_folder *= "_single/"
         A_r = 1
@@ -1877,7 +1882,6 @@ function run(A_c_in=false, A_r_in=false,θ_1=false, θ_2=false)
     end
 
     settings = []
-
     if fix_edge != 0
         push!(settings, "fixed") 
         ω_floor = fix_edge
@@ -1890,15 +1894,12 @@ function run(A_c_in=false, A_r_in=false,θ_1=false, θ_2=false)
             N_c = ceil(Int64, 0.5 * N_e)
             println("in_edge.in doesn't have any continuum delta's, setting to  ", N_c)
         end
-    end
 
+        @assert A_c < 1
+    end
     if A_c == 0.
         N_c = 0
        
-    end
-
-    if A_c == 1.
-       N_e = 0
     end
 
 
@@ -1912,13 +1913,10 @@ function run(A_c_in=false, A_r_in=false,θ_1=false, θ_2=false)
 
     output_folder *= join(settings, '_')
 
-    #if A_c != 0
-    output_folder = output_folder * @sprintf("/Ac_%.3f", A_c)
-    #end
 
-    # if p != 0.5
+    output_folder = output_folder * @sprintf("/Ac_%.3f", A_c)
     output_folder = output_folder * @sprintf("/p_%.3f", p)
-    #end
+
 
     if mode == :double_edge_in || mode == :double_edge_out
         output_folder *= @sprintf("/Ar_%.3f", A_r)
@@ -2023,7 +2021,11 @@ end
 
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    run()
+    if length(ARGS) > 0
+        A_c, A_r, p = parse.(Float64, ARGS)
+    else
+        run()
+    end
 end
 
 

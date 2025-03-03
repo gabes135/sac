@@ -13,11 +13,13 @@ plt.figure(1, (6, 3))
 
 ax = plt.gca()
 
-df = pd.read_csv("../fermion/in_files/edge_modes/aw3.dat")
-plt.plot(df.omega, df.S, c = 'k', zorder= 1, lw = 2)#, label = 'Artificial Spectrum')
+# df = pd.read_csv("../fermion/in_files/edge_modes/aw3.dat")
+# plt.plot(df.omega, df.S, c = 'k', zorder= 1, lw = 2)#, label = 'Artificial Spectrum')
 
 # Change to location of output spectrum
-folder = "../fermion/edge/out_files/t3_double_in/Nw80/Ac_0.000/p_0.500/Ar_0.500"
+# folder = "../fermion/edge/out_files/t3_double_in/Nw80/Ac_0.000/p_0.500/Ar_0.500"
+
+folder = "../fermion/edge/out_files/1D_tJ/04_pi2_double_in/Nw80/Ac_0.000/p_0.500/Ar_0.500"
 
 spec = 'd'
 n = 0
@@ -44,6 +46,6 @@ plt.xlim(-2, 3)
 plt.ylabel(r"$A(\omega)$")
 plt.xlabel(r"$\omega$")
 
-plt.savefig("figs/t3.jpg", bbox_inches='tight')
+# plt.savefig("figs/t3.jpg", bbox_inches='tight')
 
 plt.show()
