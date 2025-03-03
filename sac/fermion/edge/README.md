@@ -10,8 +10,8 @@ Set the parameters for the SAC run in `in_edge.in`. The inputs are:
 |in_edge.in|
 |---|
 |N_e, N_c: number of δ's in monotonic edge part of spectrum, number of δ's in continuum part of spectrum|
-|p, A_c, A_r: power in edge singularity, (ω-ω1)^{-p}, spectral weight of continuum ∈ [0, 1), spectral weight of rightward decaying edge ∈ [0, 1]|
 |ω_0, ω_m, δω, δω_h: lower ω bound, upper ω bound, ω spacing, ω spacing for output spec|
+|p, A_c, A_r: power in edge singularity, (ω-ω1)^{-p}, spectral weight of continuum ∈ [0, 1), spectral weight of rightward decaying edge ∈ [0, 1]|
 |θ_0, f_anneal, N_anneal, a: initial sampling temp, temperature reduction factor for main anneal,  Number of anneal steps, a for theta criterion for output spectrum|
 |anneal_steps, sample_steps, bins:, number of sweeps per anneal step, number of sweeps in final sampling, number of bins of anneal_steps sweeps per anneal step |
 |input_file, output folder: prepared filed containing QMC G(τ) data, directory to write output of SAC program to|
