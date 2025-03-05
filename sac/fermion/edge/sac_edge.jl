@@ -2023,6 +2023,7 @@ end
 if abspath(PROGRAM_FILE) == @__FILE__
     if length(ARGS) > 0
         A_c, A_r, p = parse.(Float64, ARGS)
+        run(A_c, A_r, p)
     else
         run()
     end
