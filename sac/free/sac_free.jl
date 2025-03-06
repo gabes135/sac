@@ -234,8 +234,6 @@ function zeroT_K(ω, τ, β)
     return exp(-ω * τ)
 end
 
-
-
 function bosonic_K(ω, τ, β)
     return (exp(-ω * τ) + exp(-ω * (β - τ)))/(1 + exp(-β * ω))
 end
