@@ -22,7 +22,7 @@ This `in_free.in` file must be in the same directory as `sac_free.jl`. See provi
 For this verion of the program, the user must set the *kernel type*:
 
 
-# Kernel Types
+### Kernel Types
 
 | Type | Transform  | Notes |
 |-----------|----------------|----|
