@@ -2,16 +2,25 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-plt.rcParams["text.usetex"] = True
+plt.style.use("./style.mplstyle")
 
-A_df = pd.read_csv("../output/sw000.csv")
+plt.figure(1, (6, 3))
 
-plt.figure(1, (6, 4), 300)
-
+fname = "../free/out_files/hchain_beta2048/sw000.csv"
+A_df = pd.read_csv(fname)
 plt.plot(A_df.omega, A_df.S, c='k', lw=1)
-plt.plot(-A_df.omega, A_df.S, c='k', lw=1)
 
-plt.xlabel("$\omega$")
-plt.ylabel("$A(\omega)$")
 
-plt.savefig("A_omega.pdf")
+fname = "../free/out_files/hchain_beta16/sw000.csv"
+A_df = pd.read_csv(fname)
+plt.plot(A_df.omega, A_df.S, c='b', lw=1)
+
+
+plt.xlabel(r"$\omega$")
+plt.ylabel(r"$A(\omega)$")
+
+# plt.xlim(0)
+
+# plt.savefig("A_omega.pdf")
+
+plt.show()
