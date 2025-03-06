@@ -25,7 +25,7 @@ The file `cor.dat` contains the raw G(τ) bins. The value of G(τ_i) for each bi
 
 For proper normalization of the *finite temperature* fermionic spectral function, your G(τ) data must include both G(τ = 0) and G(τ = β).
 
-***If you generate your G(τ) data using a zero temperature QMC method, then use make_tin_zeroT.jl, which treats the normalization of A(ω) differently. In this case, the only required τ point is G(τ = 0).***
+***If you generate your G(τ) data using a zero temperature QMC method or if the spectral function is for a bosonic operator, then use make_tin_zeroT.jl, which treats the normalization of A(ω) differently. In this case, the only required τ point is G(τ = 0).***
 
 
 The file `tgrid.dat` contains the τ grid that G(τ) is evaluated on. For the file, each value of τ_i is listed, one value per row. This will look like:
