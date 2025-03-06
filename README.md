@@ -1,5 +1,5 @@
 # sac - Julia code to run the Stochastic Analytic Continuation Method
-Currently only supports unconstrained sampling and the monotonic edge constrained parameterizations for fermionic spectral functions.
+Currently only supports unconstrained sampling and the monotonic edge constrained parameterizations for fermionic or bosonic spectral functions.
 
 ## Prepare G(tau) data
 
@@ -41,5 +41,5 @@ Running `make_tin.jl` will generate a `t.in` file containing G(τ) averaged over
 
 
 
-After generating, renaming, and moving the `t.in file`, navigate to the folder corresponding to the SAC paramterization you want to us ([`sac/free`](./sac/fermion/free/README.md) or [`sac/edge`](./sac/fermion/edge/README.md)) and follow the instructions in the README.md files (follow hyperlinks above).
+After generating, renaming, and moving the `t.in file`, navigate to the folder corresponding to the SAC paramterization you want to us ([`sac/free`](./sac/free/README.md) or [`sac/edge`](./sac/edge/README.md)) and follow the instructions in the README.md files (follow hyperlinks above).
 
