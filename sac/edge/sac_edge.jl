@@ -1,4 +1,3 @@
-# FERMIONIC
 using DelimitedFiles, LinearAlgebra, Statistics, Printf, Dates
 
 module SACs
@@ -115,7 +114,7 @@ Base.@kwdef mutable struct SAC
 
     fix_edge::Int64 = 0 # if 0 edge is sampled,
                       # if 1 edge is fixed to ω_floor (only for single edge case)
-    kernel_type::Symbol # finiteT or zeroT
+    kernel_type::Symbol # finiteT or zeroT or bosonic
     
     mode::Symbol
     
@@ -185,6 +184,8 @@ function init_kernal!(self::SAC)
         K_function = finiteT_K
     elseif self.kernel_type == :zeroT
         K_function = zeroT_K
+    elseif self.kernel_type == :bosonic
+        K_function = bosonic_K
     else
         throw("Invalid Kernel type.")
     end
@@ -257,6 +258,11 @@ end
 function zeroT_K(ω, τ, β)
     return exp(-ω * τ)
 end
+
+function bosonic_K(ω, τ, β)
+    return (exp(-ω * τ) + exp(-ω * (β - τ)))/(1 + exp(-β * ω))
+end
+
 
 # Initialize arrays in struct and outfiles
 function init_struct!(self::SAC)
@@ -1922,6 +1928,12 @@ function run(A_c_in=false, A_r_in=false, p_in=false, θ_1=false, θ_2=false)
         output_folder *= @sprintf("/Ar_%.3f", A_r)
     end
     
+    if kernel_type == :bosonic
+        if mode != :single_edge
+            throw("Only mode that can be run with the bosonic kernel is Csingle_edge. Exiting.")
+        end
+        ω_0 = 0.
+    end
 
     c = 1 - 2*p
    
@@ -1968,7 +1980,7 @@ function run(A_c_in=false, A_r_in=false, p_in=false, θ_1=false, θ_2=false)
     else
         sac.ω_floor[:] .= ω_0
     end
-    # end
+  
 
     write_log(sac, "N_ω, N_e, A_r, A_c, p = " *
      string(N_ω) * ", " * string(N_e) * ", "*
