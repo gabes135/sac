@@ -1930,7 +1930,7 @@ function run(A_c_in=false, A_r_in=false, p_in=false, θ_1=false, θ_2=false)
     
     if kernel_type == :bosonic
         if mode != :single_edge
-            throw("Only mode that can be run with the bosonic kernel is Csingle_edge. Exiting.")
+            throw("Only mode that can be run with the bosonic kernel is single_edge. Exiting.")
         end
         ω_0 = 0.
     end
