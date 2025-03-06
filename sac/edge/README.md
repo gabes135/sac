@@ -16,12 +16,24 @@ Set the parameters for the SAC run in `in_edge.in`. The inputs are:
 |anneal_steps, sample_steps, bins:, number of sweeps per anneal step, number of sweeps in final sampling, number of bins of anneal_steps sweeps per anneal step |
 |input_file, output folder: prepared filed containing QMC G(τ) data, directory to write output of SAC program to|
 |fix_edge, kernel type: whether sample edge (0) or fix it to value (by setting fix_edge = #), which type of kernel to use when converting A(ω) to G(τ) ('zeroT' or 'finiteT')|
-|mode: which type of edge spectrum to resolve ('single_edge', 'single_edge_out', 'double_edge_symm', 'double_edge_in'), see examples below|
+|mode: which type of edge spectrum to resolve ('single_edge', 'double_edge_symm', 'double_edge_in'), see examples below|
 
 This `in_edge.in` file should be in the same directory as `sac_edge.jl`. See provided `in_edge.in` file for example parameters.
 
 
-For this verion of the program, the user must set both the *kernel type* (either zero for finite temperature) and the *mode* (which type of edge spectrum to resolve). The names of the modes and examples of the spectra they produce, using artificial spectra (black) and synthetic QMC data, are shown below (blue).
+For this verion of the program, the user must set the *kernel type*:
+
+### Kernel Types
+
+| Type | Transform  | Notes |
+|-----------|----------------|----|
+| `zeroT` | $G(\tau) = \int_{-\infty}^{\infty} d\omega   e^{-\tau \omega }  A(\omega)$ | All modes can be run. |
+| `finiteT`  | $G(\tau) = \int_{-\infty}^{\infty} d\omega  \frac{e^{-\tau \omega } }{1 + e^{-\beta \omega}}A(\omega)$ | All modes can be run. |
+| `bosonic`    | $G(\tau) = \int_{-\infty}^{\infty} d\omega  e^{-\tau \omega } A(\omega) =   \int_{0}^{\infty} d\omega   \left(e^{-\tau \omega } + e^{-(\beta - \tau) \omega } \right)  A(\omega)$ | $A(-\omega) = e^{-\beta \omega} A(\omega)$ enforced explicitly and only positive frequency axis sampled. Foir this kernel, only the `single_edge` mode can be run. |
+
+
+
+Tthe user also must the *mode* (which type of edge spectrum to resolve). The names of the modes and examples of the spectra they produce, using artificial spectra (black) and synthetic QMC data, are shown below (blue).
 
 `single_edge` mode:
 

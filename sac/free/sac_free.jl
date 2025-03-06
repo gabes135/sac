@@ -1,9 +1,6 @@
-# SAC code for FERMIONIC spectral function
-# "Free/Unconstrained" Parameterization
-
 using Dates, DelimitedFiles, LinearAlgebra, Printf
 
-# Structure used to contain all the data for the routine
+# struct used to contain all the data for the routine
 module SACs
 Base.@kwdef mutable struct SAC
     par::Int64 # Delta function grid parameterization:
