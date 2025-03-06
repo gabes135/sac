@@ -37,15 +37,15 @@ Tthe user also must the *mode* (which type of edge spectrum to resolve). The nam
 
 `single_edge` mode:
 
-![single_edge](../../plotting/figs/t1.jpg)
+![single_edge](../plotting/figs/t1.jpg)
 
 `double_edge_symm` mode:
 
-![double_edge_symm](../../plotting/figs/t2.jpg)
+![double_edge_symm](../plotting/figs/t2.jpg)
 
 `double_edge_in` mode:
 
-![double_edge_in](../../plotting/figs/t3.jpg)
+![double_edge_in](../plotting/figs/t3.jpg)
 
 ### Run SAC
 The program is run by executing:
