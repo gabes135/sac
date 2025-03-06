@@ -5,7 +5,7 @@
 600 10000 20
 ../in_files/hchain_beta2048.in out_files/hchain_beta2048
 0 bosonic
-single_edge
+double_edge_symm
 
 ######################################################################
 
