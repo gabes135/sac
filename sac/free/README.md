@@ -28,7 +28,7 @@ For this verion of the program, the user must set the *kernel type*:
 |-----------|----------------|----|
 | `zeroT` | $G(\tau) = \int_{-\infty}^{\infty} e^{-\tau \omega } A(\omega)$ | $A(-\omega) = A(\omega)$ or $A(-\omega) \neq A(\omega)$  |
 | `finiteT`  | $G(\tau) = \int_{-\infty}^{\infty} \frac{e^{-\tau \omega } A(\omega)}{1 + e^{-\beta \omega}}$ | $A(-\omega) = A(\omega)$ or $A(-\omega) \neq A(\omega)$  |
-| `bosonic`    | $G(\tau) = \int_{-\infty}^{\infty} e^{-\tau \omega } A(\omega) =   \int_{0}^{\infty} \left(e^{-\tau \omega } + e^{-(\beta - \tau) \omega } \right) A(\omega)$ | $A(-\omega) = e^{-\beta \omega) A(\omega)$ enforced explicitly, only positive frequency axis sampled |
+| `bosonic`    | $G(\tau) = \int_{-\infty}^{\infty} e^{-\tau \omega } A(\omega) =   \int_{0}^{\infty} \left(e^{-\tau \omega } + e^{-(\beta - \tau) \omega } \right) A(\omega)$ | $A(-\omega) = e^{-\beta \omega} A(\omega)$ enforced explicitly, only positive frequency axis sampled |
 
 
 ### Run SAC
