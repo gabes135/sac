@@ -1,5 +1,6 @@
 # sac - Julia code to run the Stochastic Analytic Continuation Method
-Currently only supports unconstrained sampling and the monotonic edge constrained parameterizations for fermionic spectral functions.
+Currently supports unconstrained sampling, the $\delta$-function edge parameterization, and the monotonic edge constrained parameterization for fermionic or bosonic spectral functions.
+
 
 ## Instructions for running the monotonic edge constrained parameterization
 
