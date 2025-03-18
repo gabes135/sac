@@ -30,19 +30,17 @@ For this version of the program, the user must set the *kernel type*:
 | `finiteT`  | $G(\tau) = \int_{-\infty}^{\infty} d\omega  \frac{e^{-\tau \omega } }{1 + e^{-\beta \omega}}A(\omega)$ | $A(-\omega) = A(\omega)$ or $A(-\omega) \neq A(\omega)$  |
 | `bosonic`    | $G(\tau) = \int_{-\infty}^{\infty} d\omega  e^{-\tau \omega } A(\omega) =   \int_{0}^{\infty} d\omega   \left(e^{-\tau \omega } + e^{-(\beta - \tau) \omega } \right)  A(\omega)$ | $A(-\omega) = e^{-\beta \omega} A(\omega)$ enforced explicitly and only positive frequency axis sampled |
 
-If `symm = 0` and you are not using the bosonic kernel, then the macroscopic $\delta$ weight `A_0` represents the combined weight of the $\delta$-functions on the positive and negative frequency axes. The sampling will include updates that transfer weight between the positive and negative peaks, as well as the positive and negative continua.
+If `symm = 0` and you are not using the bosonic kernel, then the macroscopic $\delta$ weight `A_0` represents the combined weight of the $\delta$-functions on the positive and negative frequency axes. The sampling will include updates that transfer weight between the positive and negative peaks, as well as the positive and negative continua. Based on tests using synthetic data, very high data quality is needed to reproduce non-symmetric $\delta$-function edge spectra to high fidelity (see example below).
 
 
 #### Examples:
 (artificial spectrum shown in black and SAC spectrum in blue)
 
-`symm = 1` and `kernel_type = finiteT`:
+Symmetric fermionic spectral funciton (`symm = 1` and `kernel_type = finiteT`) with $A_0 = 0.7$:
 ![fermionic_symm](../plotting/figs/peak_fermionic1.png)
 
-<!-- 
-Non-symmetric fermionic spectral function:
-![fermionic](../plotting/figs/peak_fermionic2.jpg)
- -->
+Non-symmetric fermionic spectral funciton (`symm = 0` and `kernel_type = finiteT`) with $A_0 = 0.7$ ($A^+_0 = 0.2$ and $A^-_0 = 0.5$):
+![fermionic_nonsymm](../plotting/figs/peak_fermionic2.png)
 
 ### Run SAC
 The program is run by executing:
