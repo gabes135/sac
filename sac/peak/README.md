@@ -34,9 +34,9 @@ If `symm = 0` and you are not using the bosonic kernel, then the macroscopic $\d
 
 
 #### Examples:
-(Artificial spectrum shown in black and SAC spectrum in blue.)
+(artificial spectrum shown in black and SAC spectrum in blue)
 
-Symmetric fermionic spectral function:
+`symm = 1` and kernel_type = `finiteT`:
 ![fermionic_symm](../plotting/figs/peak_fermionic1.png)
 
 <!-- 
