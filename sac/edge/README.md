@@ -33,7 +33,9 @@ For this verion of the program, the user must set the *kernel type*:
 
 
 
-Tthe user also must the *mode* (which type of edge spectrum to resolve). The names of the modes and examples of the spectra they produce, using artificial spectra (black) and synthetic QMC data, are shown below (blue).
+The user also must the *mode* (which type of edge spectrum to resolve). The names of the modes and examples of the spectra they produce, using artificial spectra (black) and synthetic QMC data, are shown below (blue).
+
+#### Examples:
 
 `single_edge` mode:
 
