@@ -1,0 +1,10 @@
+2025-03-07T17:34:26.853 - Beginning Initialization.
+2025-03-07T17:34:33.657 - Initialization Finished.
+2025-03-07T17:34:33.658 - Beginning Initial Sampling.
+2025-03-07T17:34:34.887 - Initial Sampling Finished.
+2025-03-07T17:34:34.887 - Beginning Anneal.
+2025-03-07T17:36:55.668 - Anneal Finished.
+2025-03-07T17:36:55.818 - Beginning Final Anneal.
+2025-03-07T17:36:55.818 - Beginning Fast Anneal to θ_opt.
+2025-03-07T17:38:22.890 - Beginning Final Sampling to θ_opt.
+2025-03-07T17:38:56.658 - Final Anneal Finished.

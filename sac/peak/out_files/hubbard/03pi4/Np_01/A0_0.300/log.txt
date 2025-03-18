@@ -1,0 +1,5 @@
+2025-03-11T11:38:54.801 - Beginning Initialization.
+2025-03-11T11:38:59.112 - Initialization Finished.
+2025-03-11T11:38:59.112 - Beginning Initial Sampling.
+2025-03-11T11:38:59.878 - Initial Sampling Finished.
+2025-03-11T11:38:59.878 - Beginning Anneal.

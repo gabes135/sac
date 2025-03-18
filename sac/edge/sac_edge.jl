@@ -147,9 +147,10 @@ function read_G!(self::SAC)
         cov[:, j+1] = t_in[cov_start + j*(N_τ+1) + 1:cov_start + j*(N_τ+1) + N_τ,1]
     end
     
-    ω_window = log(1/G[N_τ])/τ[N_τ]
+    G_half = G[τ .<= self.β ÷ 4]
+    τ_half = τ[τ .<= self.β ÷ 4]
     
-    self.edge_guess = -(log(G[end])-log(G[end-1]))/(τ[end] - τ[end-1])
+    self.edge_guess = -(log(G_half[end])-log(G_half[end-1]))/(τ_half[end] - τ_half[end-1])
     G_D = transpose(cov) * G
 
 
@@ -240,7 +241,7 @@ function init_kernal!(self::SAC)
 
 end
 
-# Funtion to calculate kernel that can better handle large β
+# Funtion to calculate kernel that can handle large negative ω
 # K(ω, τ) = exp(-τω) / (1 + exp(-βω))
 function finiteT_K(ω, τ, β)
     num = -ω * τ
@@ -413,13 +414,14 @@ function init_config_jk!(self::SAC, j::Int64, k::Int64)
 
 
     k0 = 55
-
+    println(self.edge_guess)
     if self.fix_edge == 1
         self.ω_array[2, :] .= self.ω_array[1, :] 
         ∆d = abs(((self.ω_m * (k+5)/k0) - self.ω_array[2, 1]))
 
     elseif self.mode == :single_edge
         self.ω_array[2, 1] = self.ω_array[1, 1] + (sign(self.edge_guess) * ((j-1)*(self.ω_m)/500))
+        # ∆d = (self.edge_guess * 2*(k+5)/k0)
         ∆d = abs(((self.ω_m * (k+5)/k0) - self.ω_array[2, 1]))
 
     elseif self.mode == :double_edge_in
@@ -532,7 +534,7 @@ function init_config_dual!(self::SAC)
                 end
             end
 
-        
+            
             calc_Gbar!(self, 1)
             
             χ2 = calc_χ2(self)
@@ -784,7 +786,7 @@ end
 
 
 ##########################################################################################
-# Update Functions
+## Update Functions
 ##########################################################################################
 
 # Update freq. of single delta in edge
@@ -1459,13 +1461,23 @@ function write_res(self::SAC, j::Int64, θ::Float64)
 
     # χ2, edge, n0, etc. throughout anneal
     f = open(self.anneal_file, "a")
-        println(f, j, ",", round(θ, digits=8), ",", self.χ2_min/self.N_τ, ",", self.χ2_res[2]/self.N_τ, ",", self.χ2_res[3]/self.N_τ, ",",
-                   self.edge_res[2, 1], ", ", self.ωn0_res[2, 1], ",", self.n0_res[2, 1], ",", self.ε_0[1] , ",",
-                   self.edge_res[3, 1], ", ", self.ωn0_res[3, 1], ",", self.n0_res[3, 1], ",",
-                   -self.edge_res[2, 2], ", ", -self.ωn0_res[2, 2], ",", self.n0_res[2, 2], ",", self.ε_0[2] , ",",
-                   self.edge_res[3, 2], ", ", self.ωn0_res[3, 2], ",", self.n0_res[3, 2], ",",
-                   ω_cont0, ",", ω_contf)
+
+   
+    anneal_values = [
+        θ, self.χ2_min/self.N_τ, self.χ2_res[2]/self.N_τ, self.χ2_res[3]/self.N_τ,
+        self.edge_res[2, 1], self.ωn0_res[2, 1], self.n0_res[2, 1], self.ε_0[1],
+        self.edge_res[3, 1], self.ωn0_res[3, 1], self.n0_res[3, 1],
+        -self.edge_res[2, 2], -self.ωn0_res[2, 2], self.n0_res[2, 2], self.ε_0[2],
+        self.edge_res[3, 2], self.ωn0_res[3, 2], self.n0_res[3, 2], ω_cont0, ω_contf
+    ]
+
+    anneal_values = round.([anneal_values...], digits=8)
+
+    println(f, j, ",", join(anneal_values, ","))
+
     close(f)
+
+
 
 
     # acceptance rates
@@ -1489,8 +1501,9 @@ function write_res(self::SAC, j::Int64, θ::Float64)
         
 
         f = open(accept_files[R_L], "a")
-            println(f, j, ",", a1, ",", a2, ",", a3, ",", a4, ",", a5, ",", a6, ",", a7, ",", a8)
+        println(f, j, ",", join(round.([a1, a2, a3, a4, a5, a6, a7, a8], digits=8), ","))
         close(f)
+
 
     end
 
@@ -1680,7 +1693,7 @@ function anneal(self::SAC, χ2_target::Float64, bins::Int64, spec::Int64)
 end 
 
 
-# Basical annealing routine:
+# Basic annealing routine:
 # 1) Run a full anneal (setting χ2_target == 0
 #        or until χ2 is sufficiently close to χ2_min
 #        or for all N_anneal steps)
@@ -1741,17 +1754,31 @@ function anneal_and_sample(self::SAC)
     end
    
 
-    f = open(self.sample_file, "a")
-        println(f, 0, ",", round(θ_opt, digits=8), ",", self.χ2_min/self.N_τ, ",", self.χ2_res[2]/self.N_τ, ",",self.χ2_res[3]/self.N_τ, ",",
-                   self.edge_res[2, 1], ", ", self.ωn0_res[2, 1], ",", self.n0_res[2, 1], ",", self.ε_0[1] , ",",
-                   self.edge_res[3, 1], ", ", self.ωn0_res[3, 1], ",", self.n0_res[3, 1], ",",
-                   -self.edge_res[2, 2], ", ", -self.ωn0_res[2, 2], ",", self.n0_res[2, 2], ",", self.ε_0[2] , ",",
-                   self.edge_res[3, 2], ", ", self.ωn0_res[3, 2], ",", self.n0_res[3, 2], ",",
-                   ω_cont0, ",", ω_contf)
+   f = open(self.sample_file, "a")
+
+   
+    sample_values = round.([
+        θ_opt, self.χ2_min/self.N_τ, self.χ2_res[2]/self.N_τ, self.χ2_res[3]/self.N_τ,
+        self.edge_res[2, 1], self.ωn0_res[2, 1], self.n0_res[2, 1], self.ε_0[1],
+        self.edge_res[3, 1], self.ωn0_res[3, 1], self.n0_res[3, 1],
+        -self.edge_res[2, 2], -self.ωn0_res[2, 2], self.n0_res[2, 2], self.ε_0[2],
+        self.edge_res[3, 2], self.ωn0_res[3, 2], self.n0_res[3, 2], ω_cont0, ω_contf
+    ], digits=8)
+
+    
+    println(f, 0, ",", join(sample_values, ","))
+
     close(f)
 
     write_log(self, "Final Sampling Finished.")
 end
+
+
+# Annealing routine for scanning between two temperature ranges:
+# 1) Run a faster anneal until θ_1
+#        
+# 2) Perform slower anneal between θ_1 and θ_2 to get very smooth 
+#        χ2 curves for performing scans over parameters (like power p)
 
 function anneal_and_scan(self::SAC, θ_1::Float64, θ_2::Float64)
 
@@ -1780,23 +1807,29 @@ function anneal_and_scan(self::SAC, θ_1::Float64, θ_2::Float64)
     f_scan = 1.15
     N_scan = ceil(Int64, log(θ_1/θ_2)/log(f_scan))
     θ = θ_1
+    sample_values = []
     for i=1:N_scan
         bins = ceil(Int64, self.bins * (1 + i/N_scan))
 
         run_bins(self, self.sample_steps, bins, θ)
 
-    # for R_L in self.R_L_index
-    #     write_spec(self, 0, bins*self.sample_steps, R_L)
-    # end
    
+   
+       f = open(self.sample_file, "a")
 
-        f = open(self.sample_file, "a")
-            println(f, i, ",", round(θ, digits=8), ",", self.χ2_min/self.N_τ, ",", self.χ2_res[2]/self.N_τ, ",",self.χ2_res[3]/self.N_τ, ",",
-                       self.edge_res[2, 1], ", ", self.ωn0_res[2, 1], ",", self.n0_res[2, 1], ",", self.ε_0[1] , ",",
-                       self.edge_res[3, 1], ", ", self.ωn0_res[3, 1], ",", self.n0_res[3, 1], ",",
-                       -self.edge_res[2, 2], ", ", -self.ωn0_res[2, 2], ",", self.n0_res[2, 2], ",", self.ε_0[2] , ",",
-                       self.edge_res[3, 2], ", ", self.ωn0_res[3, 2], ",", self.n0_res[3, 2])
+        sample_values = round.([
+            θ, self.χ2_min/self.N_τ, self.χ2_res[2]/self.N_τ, self.χ2_res[3]/self.N_τ,
+            self.edge_res[2, 1], self.ωn0_res[2, 1], self.n0_res[2, 1], self.ε_0[1],
+            self.edge_res[3, 1], self.ωn0_res[3, 1], self.n0_res[3, 1],
+            -self.edge_res[2, 2], -self.ωn0_res[2, 2], self.n0_res[2, 2], self.ε_0[2],
+            self.edge_res[3, 2], self.ωn0_res[3, 2], self.n0_res[3, 2]
+        ], digits=8)
+
+
+        println(f, i, ",", join(sample_values, ","))
+
         close(f)
+
         θ /= f_scan
 
         for R_L in self.R_L_index

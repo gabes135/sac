@@ -21,7 +21,7 @@ mutable struct Synth
     N_b::Int64 # Number of bins to generate
     
     ω0::Float64 # Lower spectral edge for either delta/Gaussian or power law singularity
-    ω0_n::Float64 # Negative frequency lower spectral edgefor either delta/Gaussian or power law singularity
+    ω0_n::Float64 # Negative frequency lower spectral edge for either delta/Gaussian or power law singularity
     A0::Float64 # delta/Gaussian weight at edge if spec_type = 1
                 # exponent in power (0 < A0 < 1) if spec_type = 2
     ω_exp::Float64 # location of exponential fall off if spec_type = 2
@@ -43,10 +43,33 @@ mutable struct Synth
     spec_file::String # output file for generated S(ω)
     τ_grid_file::String # output file for list of τ points
     G_bins_file::String # output file for G(τ) bins with noise added
+
+    kernel_type::Symbol
     
     
 end
 end
+
+function finiteT_K(ω, τ, β)
+    num = -ω * τ
+    denom = -β * ω
+
+    max_term = max(num, denom, 0) 
+ 
+    num_stab = exp(num - max_term)
+    denom_stab = exp(-max_term) + exp(denom - max_term)
+
+    return num_stab / denom_stab
+end
+
+function zeroT_K(ω, τ, β)
+    return exp(-ω * τ)
+end
+
+function bosonic_K(ω, τ, β)
+    return (exp(-ω * τ) + exp(-ω * (β - τ)))
+end
+
 
 function init_weights(self::Synths.Synth)
     if self.spec_type == 1
@@ -67,6 +90,9 @@ function write_spec(self::Synths.Synth)
     
     if self.spec_type == 1
         ωm = maximum(self.ωGs .+ (8 .* self.σGs))
+        if self.A_minus > 0
+            ωm_n = minimum(self.ωGs .- (8 .* self.σGs))
+        end
     elseif self.spec_type == 2
         ωm = maximum(self.ωGs .+ (5 .* self.σGs))
         ωm = maximum([ωm, self.ω_exp + 1/self.σ0])
@@ -87,8 +113,34 @@ function write_spec(self::Synths.Synth)
         ωm = self.ω0_n
         ωm_n = self.ω0
     end
-    
-    if self.spec_type == 1 || self.spec_type == 2
+    if self.spec_type == 1 &&  self.A_minus > 0
+        δω_p = (ωm - self.ω0) / N_ω
+        δω_n = (self.ω0_n - ωm_n) / N_ω 
+
+        println(ωm_n, " ", self.ω0_n, " ", self.ω0, " ", ωm)
+
+
+        open(self.spec_file, "w") do f
+            println(f, "omega,S")
+            for i=0:N_ω-1
+                ω = self.ω0_n - ((N_ω-i)*δω_n)
+                s = get_spec(self, ω)
+                writedlm(f, [[ω s]], ',')
+            end
+            println(f, self.ω0_n, ",", self.A_minus*self.A0/δω_n)
+            println(f, self.ω0_n+(δω_n), ",", 0.)
+
+            println(f, self.ω0 - (δω_p), ",", 0.)
+            println(f, self.ω0, ",", self.A_plus*self.A0/δω_p)
+            for i=1:N_ω
+                ω = self.ω0 + (i*δω_p)
+                s = get_spec(self, ω)
+                writedlm(f, [[ω s]], ',')
+            end
+        end
+
+    elseif self.spec_type == 1 || self.spec_type == 2
+
         δω = (ωm - self.ω0) / N_ω    
         println(self.ω0, " ", ωm)
         
@@ -101,6 +153,8 @@ function write_spec(self::Synths.Synth)
        
         open(self.spec_file, "w") do f
             println(f, "omega,S")
+            println(f, self.ω0, ",", 0.)
+            println(f, self.ω0, ",", self.A0/δω)
             for i=1:N_ω
                 ω = ω1 + (i*δω)
                 s = get_spec(self, ω)
@@ -156,7 +210,7 @@ function get_spec(self::Synths.Synth, ω::Float64, spec_type=0)
     end
 
     if spec_type==1 
-        if (ω > self.ω0 - ε) 
+        if (ω > self.ω0) 
             for n=1:self.N_G
                 s += self.AGs[n] * exp(-((self.ωGs[n] - ω) ^ 2)/(2 * (self.σGs[n]^2)))
             end
@@ -164,12 +218,26 @@ function get_spec(self::Synths.Synth, ω::Float64, spec_type=0)
             for n=1:self.N_G
                 s += self.AGs[n] * exp(-((self.ωGs[n] - ω) ^ 2)/(2 * (self.σGs[n] ^2)) - (self.ω0 - ω)/self.σ0)
             end
+
+
         end
-        if self.spec_type ==1
-            if (self.σ0 > 1e-8) 
-               s += self.A0 * exp(-((self.ω0 - ω)^2)/(2 * (self.σ0^2)))
+        
+        # if (self.σ0 > 1e-8) 
+        #    s += self.A0 * exp(-((self.ω0 - ω)^2)/(2 * (self.σ0^2)))
+        # end
+
+
+        if (ω < self.ω0_n) 
+            for n=1:self.N_G
+                s += self.AGs[n] * exp(-((self.ωGs[n] - ω) ^ 2)/(2 * (self.σGs[n]^2)))
             end
-        end
+        end  
+        # if (self.σ0 > 1e-8) 
+        #    s += self.A0 * exp(-((self.ω0_n - ω)^2)/(2 * (self.σ0^2)))
+        # end
+
+
+    
     elseif spec_type==2 
         if (ω > self.ω0 && ω < self.ω_exp) 
             s = (ω-self.ω0)^(-self.A0)
@@ -418,6 +486,13 @@ function tau_grid(self::Synths.Synth)
         τ_grid = Integer.(unique(round.(10 .^ range( log10(1), log10(N), length = M ), digits=0))) .- 1
         τ_grid = vcat(τ_grid, reverse(1+2*self.τ_max ÷ self.δτ .- τ_grid ))
         N_τ = length(τ_grid)-1
+
+     elseif self.grid_type == 7
+        N = (self.τ_max ÷ self.δτ) + 1
+        M = self.M#40
+        τ_grid = Integer.(unique(round.(10 .^ range( log10(1), log10(N), length = M ), digits=0))) .- 1
+        τ_grid = vcat(τ_grid, (2*n_β) .- reverse(τ_grid) .- 1, [self.β])
+        N_τ = length(τ_grid)-1
     end
     
     println("τ_max = ", round(τ_grid[end]* self.δτ, digits =2))
@@ -428,23 +503,43 @@ function tau_grid(self::Synths.Synth)
 end
 
 function integrand(self::Synths.Synth, τ, ω, spec_type = 0)
-    if self.spec_type == 3 || self.spec_type == 4 || self.spec_type == 5
-        #println([get_spec(self, ω, spec_type), exp(-τ * ω) / (1+exp(-ω * self.β))])
-        return get_spec(self, ω, spec_type) * exp(-τ * ω) / (1+exp(-ω * self.β))
-    elseif self.spec_type == 6
-        return get_spec(self, ω, spec_type) * exp(-τ * ω)
+
+    if self.kernel_type == :finiteT
+        K_function = finiteT_K
+    elseif self.kernel_type == :zeroT
+        K_function = zeroT_K
+    elseif self.kernel_type == :bosonic
+        K_function = bosonic_K
     else
-        return get_spec(self, ω, spec_type) *  (exp(-τ * ω) + exp(-(self.β -τ) * ω))
+        throw("Invalid Kernel type.")
     end
+
+    return get_spec(self, ω, spec_type) * K_function(ω, τ, self.β)
+
 end
 
 
 
 function make_G_tau(self::Synths.Synth)
+
+    if self.kernel_type == :finiteT
+        K_function = finiteT_K
+    elseif self.kernel_type == :zeroT
+        K_function = zeroT_K
+    elseif self.kernel_type == :bosonic
+        K_function = bosonic_K
+    else
+        throw("Invalid Kernel type.")
+    end
+    
+
     ωm = 0.0
     ωm_n = 0.0
     if self.spec_type == 1 
         ωm = maximum(self.ωGs .+ (10 .* self.σGs))
+        if self.A_minus > 0
+            ωm_n = minimum(self.ωGs .- (10 .* self.σGs))
+        end
     elseif self.spec_type == 2 
         ωm = maximum(self.ωGs .+ (10 .* self.σGs))
         ωm = maximum([ωm, self.ω_exp + 10/self.σ0])
@@ -476,12 +571,17 @@ function make_G_tau(self::Synths.Synth)
         if self.spec_type==1 
             if self.σ0 < 1e-8
                 G0_val = quadgk(ω -> integrand(self, τ, ω), self.ω0, ωm, rtol=1e-13)[1]
+                
+                if self.A_minus > 0 
+                    G0_val += quadgk(ω -> integrand(self, τ, ω), ωm_n, self.ω0_n, rtol=1e-13)[1]
+                end
             else
-                G0_val = quadgk(ω -> integrand(self, τ, ω), 0, ωm, rtol=1e-13)[1]
+                G0_val = quadgk(ω -> integrand(self, τ, ω), ωm_n, ωm, rtol=1e-13)[1]
             end
             
             if self.σ0 < 1e-8
-                G0_val += self.A0*(exp(-τ*self.ω0) + exp(-(self.β-τ)*self.ω0))
+                G0_val += self.A_plus*self.A0* K_function(self.ω0, τ, self.β)
+                G0_val += self.A_minus*self.A0* K_function(self.ω0_n, τ, self.β)
             end
         elseif self.spec_type==2
             ω1 = 0.05
@@ -515,9 +615,11 @@ function make_G_tau(self::Synths.Synth)
 
 
         G0[j+1] = G0_val/pi
+
     end
     
     self.G0 = G0
+
 
     # remove_inds = []
     # for i=1:length(self.τ_array)
@@ -539,7 +641,9 @@ function make_G_tau(self::Synths.Synth)
 end
 
 function add_noise(self::Synths.Synth)
-    if self.spec_type == 4
+    if self.spec_type == 1 && self.A_minus > 0
+        σ = self.σ * (self.G0[1] + self.G0[end])
+    elseif self.spec_type == 4
         σ = self.σ * (self.G0[1] + self.G0[end])
     elseif self.spec_type == 6 && self.ω0 < 0
         σ = self.σ * self.G0
@@ -583,7 +687,7 @@ function Synth(spec_type, β, τ_max, δτ, grid_type, M,
                ω0, ω0_n, A0, ω_exp, σ0,
                A_plus, A_minus,
                N_G, ωGs, AGs, σGs,
-               spec_file, τ_grid_file, G_bins_file)
+               spec_file, τ_grid_file, G_bins_file, kernel_type)
 
     τ_array = zeros()
     N_τ = 0
@@ -595,7 +699,7 @@ function Synth(spec_type, β, τ_max, δτ, grid_type, M,
     ω0, ω0_n, A0, ω_exp, σ0,
     A_plus, A_minus,
     N_G, ωGs, AGs, σGs,
-    G0, spec_file, τ_grid_file, G_bins_file]
+    G0, spec_file, τ_grid_file, G_bins_file, kernel_type]
 
     return Synths.Synth(args...)
 

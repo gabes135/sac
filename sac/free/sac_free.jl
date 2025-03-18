@@ -41,7 +41,7 @@ Base.@kwdef mutable struct SAC
     ω_window::Float64 = 0. # Rough frequency scale deduced from G(τ)
 
 
-    ωi_array::Array{Int64, 1} = Array{Int64}(undef, 0) # Delta function locations 
+    ωi_array::Array{Int64, 1} = Array{Int64}(undef, 0) # Delta function locations stored as integers
     A_array::Array{Float64, 1} = Array{Float64}(undef, 0) # Delta function amplitudes 
     K_array::Array{Float64, 2} = Array{Float64}(undef, 0, 0) # Kernel 
 
@@ -116,8 +116,9 @@ function read_G!(self)
         cov[:, j+1] = t_in[cov_start + j*(N_τ+1) + 1:cov_start + j*(N_τ+1) + N_τ,1]
     end
     
-    ω_window = log(1/G[N_τ ÷ 2])/τ[N_τ ÷ 2]
-
+    G_half = G[τ .<= self.β ÷ 2]
+    τ_half = τ[τ .<= self.β ÷ 2]
+    ω_window = log(1/G_half[end])/τ_half[end]
     
     G_D = transpose(cov) * G # Transform into eigenbasis of covariance matrix
     
@@ -136,8 +137,8 @@ function initialize!(self)
         self.ω_0 = 0
     end
     
-    ωi_0 = Int64(floor(self.ω_0/self.δω)) # Converting ω_0 to integer
-    ωi_m = Int64(ceil(self.ω_m/self.δω))
+    ωi_0 = floor(Int64, self.ω_0/self.δω) # Converting ω_0 to integer
+    ωi_m = ceil(Int64, self.ω_m/self.δω)
     
     ω_window = self.ω_window/self.δω
     
@@ -182,7 +183,7 @@ function initialize!(self)
     end
 
     
-    #Initializing Fermionic Kernel
+    # Initializing Kernel
 
     if self.kernel_type == :finiteT
         K_function = finiteT_K
@@ -198,7 +199,7 @@ function initialize!(self)
     K_array = zeros(Float64, (self.N_τ, N_ωi))
     K_vals = zeros(Float64, self.N_τ)
     for i=ωi_0:ωi_m
-        ω = ((i + 0.5) * self.δω)
+        ω = i * self.δω
         K_vals .= K_function.(ω, self.τ, self.β)
 
         #If symm, then kernel is adjusted to account for S(-ω) = S(ω) 
@@ -206,7 +207,6 @@ function initialize!(self)
             K_vals .+=  K_function.(-ω, self.τ, self.β)
         end
       
-       
 
         K_array[:, i-ωi_0+1] .= K_vals
         K_array[:, i-ωi_0+1] .= transpose(self.cov) * K_array[:, i-ωi_0+1] # Transform into eigenbasis of covariance matrix
@@ -963,7 +963,6 @@ function write_spec(self, n)
     
     δω_conversion = Int64(round(self.δω_h/self.δω))
     N_h = Int64((self.ωi_m - self.ωi_0) / δω_conversion)
-    sampled_spec_hist = zeros(Float64, N_h)
     
     # Multiply back normalization factors
     f = 1. #additional normalzation factor for bosonic spectra
@@ -1043,22 +1042,13 @@ function fast_anneal(self)
         
         sample(self, self.anneal_steps ÷ 2, θ)
 
-        # χ2 is normalized by number of τ points in output files
-        open(self.anneal_file, "a") do f
-           writedlm(f, [[i, θ, self.χ2_min/self.N_τ, self.sampled_χ2/self.N_τ]], ',')
-        end
-        
-        open(self.accept_rate_file, "a") do f
-            output = cat([i], self.accept_rates,self.update_windows[[1, 2, 4]].* self.δω, dims=1)
-            writedlm(f, [output], ',')
-        end
          
     end
 
 end
 
 # Run anneal, N_anneal temperature steps or until χ2_min converged 
-function main_anneal(self)
+function main_anneal(self, wr = false)
 
     θ = self.θ_0
 
@@ -1072,20 +1062,27 @@ function main_anneal(self)
         
 
         open(self.anneal_file, "a") do f
-           writedlm(f, [[i, θ, self.χ2_min/self.N_τ, self.sampled_χ2/self.N_τ]], ',')
+           writedlm(f, [[i, round(θ, digits = 8),
+                            round(self.χ2_min/self.N_τ, digits = 4),
+                            round(self.sampled_χ2/self.N_τ, digits = 4)]], ',')
         end
         
         open(self.accept_rate_file, "a") do f
-            output = cat([i], self.accept_rates,self.update_windows[[1, 2, 4]].* self.δω, dims=1)
+            rounded_values = round.([self.accept_rates..., self.update_windows[[1, 2, 4]] .* self.δω], digits=8)
+
+            output = cat([i], rounded_values, dims=1)
+
             writedlm(f, [output], ',')
         end
-        
+
         self.χ2_anneal[i] = self.sampled_χ2
         
-        # Uncomment this line if you want to output the spectrum at each temperature in anneal
+        # if wr is set to true then spectrum is output at each temperature in anneal
         # instead of just during final sampling step 
-        #write_spec(self, i)
-        
+        if wr
+            write_spec(self, i)
+        end
+
         # Exit main anneal is sufficiently close to χ2_min
         if (self.sampled_χ2 - self.χ2_min) < (self.tol * self.N_τ) 
             return
@@ -1099,7 +1096,7 @@ end
 
 
 # After identifying optimal θ from main anneal, run a final anneal from 10*θ_opt to θ_opt
-# if a1 == a2, onlly one spectrum is output, otherwise spectra at a series of decreasing 
+# if a1 == a2, only one spectrum is output, otherwise spectra at a series of decreasing 
 # a values are output
 
 function final_anneal(self, θ_opt)
@@ -1175,6 +1172,7 @@ function run()
     if kernel_type == :bosonic
         ω_0 = 0.
         symm = 0
+    
     elseif symm == 1
         output_folder *= "_symm"
         ω_0 = 0.
@@ -1238,7 +1236,7 @@ function run()
 
     write_log(sac, "Beginning Main Anneal.")
 
-    main_anneal(sac)
+    main_anneal(sac, wr = false)
 
     write_log(sac, "Main Anneal Finished.")
 

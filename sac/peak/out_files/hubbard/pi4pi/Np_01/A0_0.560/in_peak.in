@@ -1,0 +1,16 @@
+1000 1
+0.56 15. 0.00001 0.005
+10 1.1 0.5
+200 1000 10000
+../in_files/hubbard_pi4pi.in out_files/hubbard_pi4pi
+0 finiteT
+
+
+######################################################################
+
+1: N_ω, N_p ## number of δ's in continuum, number of δ's in peak
+2: A_0, ω_m, δω, δω_h ## weight of macroscopic delta edge(s), upper ω bound, ω spacing, ω spacing for output spec
+3: θ_0, f_anneal, a_criterion ## initial sampling temp, temperature reduction factor for main anneal,  a value for theta criterion
+4: N_anneal, anneal_steps, sample_steps ## Number of anneal steps, number of sweeps per anneal step in main anneal, number of sweeps per anneal step in final anneal 
+6: G_file, output folder ## name of input G(tau) file, name of output file
+5: symm, kernel type ## whether to enforce A(-omega) = A(omega) (1) are sample A(omega) across the full freq. axis (0), which type of kernel to use when converting A(ω) to G(τ) ('zeroT' or 'finiteT' or 'bosonic')
