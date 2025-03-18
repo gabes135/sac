@@ -6,3 +6,5 @@
 2025-03-18T17:20:41.554 - Anneal Finished.
 2025-03-18T17:20:41.731 - Beginning Final Anneal.
 2025-03-18T17:20:41.731 - Beginning Fast Anneal to θ_opt.
+2025-03-18T17:22:43.939 - Fast Anneal to θ_opt Finished.
+2025-03-18T17:22:43.940 - Beginning Final Sampling at θ_opt.

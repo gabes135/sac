@@ -1,5 +1,5 @@
 # sac - Julia code to run the Stochastic Analytic Continuation Method
-Currently supports unconstrained sampling, single delta-edge, and the monotonic edge constrained parameterizations for fermionic or bosonic spectral functions.
+Currently supports unconstrained sampling, the $\delta$-function edge parameterization, and the monotonic edge constrained parameterization for fermionic or bosonic spectral functions.
 
 ## Instructions for running delta-edge sampling
 
@@ -34,10 +34,10 @@ If `symm = 0` and you are not using the bosonic kernel, then the macroscopic $\d
 
 
 #### Examples:
-Artificial spectrum shown in black and SAC spectrum in blue.
+(Artificial spectrum shown in black and SAC spectrum in blue.)
 
 Symmetric fermionic spectral function:
-![fermionic_symm](../plotting/figs/peak_fermionic1.jpg)
+![fermionic_symm](../plotting/figs/peak_fermionic1.png)
 
 <!-- 
 Non-symmetric fermionic spectral function:
