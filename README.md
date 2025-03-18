@@ -1,7 +1,7 @@
 # sac - Julia code to run the Stochastic Analytic Continuation Method
-Currently only supports unconstrained sampling and the monotonic edge constrained parameterizations for fermionic or bosonic spectral functions.
+Currently supports unconstrained sampling, the $\delta$-function edge parameterization, and the monotonic edge constrained parameterization for fermionic or bosonic spectral functions.
 
-## Prepare G(tau) data
+## Prepare G($\tau$) data
 
 To run the sac_free.jl, you first need to generate a t.in file containing the covariance (in imaginary time) matrix for your G(τ) data. This is done using `make_tin.jl` in the folder `sac/process_G`, which reads in your G(τ) in the form of a full list of G(τ) bins (not bin averages). The two input files for `make_tin.jl` are `cor.dat` and `tgrid.dat` (see examples of these files in the `process_G` folder). **Note: you need to edit the inverse temperature β set in the `run` function in `make_tin.jl` for your specific data set**
 
@@ -41,5 +41,5 @@ Running `make_tin.jl` will generate a `t.in` file containing G(τ) averaged over
 
 
 
-After generating, renaming, and moving the `t.in file`, navigate to the folder corresponding to the SAC paramterization you want to us ([`sac/free`](./sac/free/README.md) or [`sac/edge`](./sac/edge/README.md)) and follow the instructions in the README.md files (follow hyperlinks above).
+After generating, renaming, and moving the `t.in file`, navigate to the folder corresponding to the SAC paramterization you want to use ([`sac/free`](./sac/free/README.md), ([`sac/peak`](./sac/peak/README.md), or [`sac/edge`](./sac/edge/README.md)), and follow the instructions in the README.md files (follow hyperlinks above).
 
