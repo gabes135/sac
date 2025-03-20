@@ -30,7 +30,7 @@ For this version of the program, the user must set the *kernel type*:
 | `finiteT`  | $G(\tau) = \int_{-\infty}^{\infty} d\omega  \frac{e^{-\tau \omega } }{1 + e^{-\beta \omega}}A(\omega)$ | $A(-\omega) = A(\omega)$ or $A(-\omega) \neq A(\omega)$  |
 | `bosonic`    | $G(\tau) = \int_{-\infty}^{\infty} d\omega  e^{-\tau \omega } A(\omega) =   \int_{0}^{\infty} d\omega   \left(e^{-\tau \omega } + e^{-(\beta - \tau) \omega } \right)  A(\omega)$ | $A(-\omega) = e^{-\beta \omega} A(\omega)$ enforced explicitly and only positive frequency axis sampled |
 
-If `symm = 0` and you are not using the bosonic kernel, then the macroscopic $\delta$ weight `A_0` represents the combined weight of the $\delta$-functions on the positive and negative frequency axes. The sampling will include updates that transfer weight between the positive and negative peaks, as well as the positive and negative continua. Based on tests using synthetic data, very high data quality is needed to reproduce non-symmetric $\delta$-function edge spectra to high fidelity (see example below).
+If `symm = 0` and you are not using the bosonic kernel, then the macroscopic $\delta$ weight `A_0` represents the combined weight of the $\delta$-functions on the positive and negative frequency axes. The sampling will include updates that transfer weight between the positive and negative peaks, as well as the positive and negative continua. Based on tests using synthetic data, high data quality and a very slow anneal is needed to reproduce non-symmetric $\delta$-function edge spectra to high fidelity (see example below).
 
 
 #### Examples:

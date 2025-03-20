@@ -72,9 +72,14 @@ plt.plot(A_df.omega, A_df.S, c='k', lw=2, zorder = 1)
 
 
 
-fname = "../peak/out_files/fermionic2/Np_01/A0_0.700/sw000_v1.csv"
+fname = "../peak/out_files/fermionic2/Np_01/A0_0.700/sw000.csv"
 A_df = pd.read_csv(fname)
 plt.plot(A_df.omega, A_df.S, c='b', lw=1)
+
+
+# fname = "../peak/out_files/fermionic2/Np_01/A0_0.700/sw000_2k.csv"
+# A_df = pd.read_csv(fname)
+# plt.plot(A_df.omega, A_df.S, c='r', lw=1)
 
 
 
