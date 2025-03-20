@@ -1,5 +1,12 @@
-2025-03-18T17:31:49.663 - Beginning Initialization.
-2025-03-18T17:31:53.107 - Initialization Finished.
-2025-03-18T17:31:53.108 - Beginning Initial Sampling.
-2025-03-18T17:32:15.784 - Initial Sampling Finished.
-2025-03-18T17:32:15.785 - Beginning Anneal.
+2025-03-19T17:48:43.211 - Beginning Initialization.
+2025-03-19T17:48:46.979 - Initialization Finished.
+2025-03-19T17:48:46.982 - Beginning Initial Sampling.
+2025-03-19T17:55:13.993 - Initial Sampling Finished.
+2025-03-19T17:55:13.993 - Beginning Anneal.
+2025-03-19T19:15:57.618 - Anneal Finished.
+2025-03-19T19:15:57.887 - Beginning Final Anneal.
+2025-03-19T19:15:57.887 - Beginning Fast Anneal to θ_opt.
+2025-03-19T19:33:22.403 - Fast Anneal to θ_opt Finished.
+2025-03-19T19:33:22.404 - Beginning Final Sampling at θ_opt.
+2025-03-19T19:34:49.274 - Final Sampling at θ_opt Finished.
+2025-03-19T19:34:49.275 - Final Anneal Finished.

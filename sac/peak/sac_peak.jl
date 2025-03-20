@@ -166,8 +166,8 @@ function initialize!(self::SAC)
     self.cont_n = (1+self.N_ω+2*self.N_p):(2*self.N_ω+2*self.N_p)
 
     # Initial guess for location and amplitude of pos./neg. peaks
-    A0_p = self.A_0/(1 + (1/self.approx_ratio))
-    A0_n = self.A_0/(1 + self.approx_ratio)
+    A0_p = self.A_0/(1 + (1/self.approx_ratio))#.21#
+    A0_n = self.A_0/(1 + self.approx_ratio)#.49#
 
 
 
@@ -195,8 +195,8 @@ function initialize!(self::SAC)
 
     # Distribute remaining weight evenly amongst all continu (equal ration between pos./neg.)
     Ac = (1-self.A_0)/2
-    Ac_p = (1-self.A_0)/(1 + (1/self.approx_ratio))
-    Ac_n = (1-self.A_0)/(1 + self.approx_ratio)
+    Ac_p = (1-self.A_0)/(1 + (1/self.approx_ratio))#.1#
+    Ac_n = (1-self.A_0)/(1 + self.approx_ratio)#.2#
 
     A_array[self.cont_p] .= (1:self.N_ω)
     A_array[self.cont_n] .= (1:self.N_ω)
@@ -220,12 +220,12 @@ function initialize!(self::SAC)
         ωi_array[self.peak_n] .= 0
         ωi_array[self.cont_n] .= 0
     else
-        A_array ./= sum(A_array)
+        A_array ./= sum(A_array) 
     end
     
-    # println([A0_p, A0_n])
-    # println([ωi_pp, ωi_np].* self.δω)
-    # println([Ac_p, Ac_n])
+    println([A0_p, A0_n])
+    println([ωi_pp, ωi_np].* self.δω)
+    println([Ac_p, Ac_n])
     # Initializing Kernel
 
 
@@ -1084,7 +1084,13 @@ function adjust_windows(self::SAC, steps::Int64, θ::Float64)
             elseif self.accept_rates[k] < 0.45
                 self.update_windows[k] /= 1.2
             end   
+
+            # if self.update_windows[k]*self.δω < (1e-3/self.N_ω)
+            #     self.update_windows[k] = 1e-3/(self.δω*self.N_ω)
+            # end
         end
+
+
         
     end
 
@@ -1267,9 +1273,23 @@ end
 # Higher temp intialization steps
 function initial_sampling(self, θ_0)
 
-    adjust_windows(self, self.anneal_steps, 10*θ_0)
-    adjust_windows(self, self.anneal_steps, 5*θ_0)
-    adjust_windows(self, self.anneal_steps, 2*θ_0)
+    # adjust_windows(self, self.anneal_steps*2, 10*θ_0)
+
+    for i=1:40
+        θ = θ_0 * (11-(i/4))
+        steps = self.anneal_steps ÷ 2
+        adjust_windows(self, steps, θ)
+        sample(self, steps, θ)
+
+    end
+
+
+    #adjust_windows(self, self.anneal_steps*10, 5*θ_0)
+    #adjust_windows(self, self.anneal_steps*10, 2*θ_0)
+
+    # sample(self, self.anneal_steps*10, 10*θ_0)
+    # sample(self, self.anneal_steps*5, 5*θ_0)
+    # sample(self, self.anneal_steps*5, 2*θ_0)
 
 
 end
@@ -1311,13 +1331,12 @@ function run_anneal(self, θ_0, wr=false)
         # Write acceptance rates
             open(self.accept_rate_file, "a") do f
             output = cat([i], 
-                         map(x -> round(x, digits=8), self.accept_rates[[1, 2, 3, 8, 9, 10]]),
+                         map(x -> round(x, digits=4), self.accept_rates[[1, 2, 3, 8, 9, 10]]),
                          map(x -> round(x, digits=8), self.update_windows[[1, 2, 8, 9]] .* self.δω),
-                         map(x -> round(x, digits=8), self.accept_rates[[4, 5]]),
+                         map(x -> round(x, digits=4), self.accept_rates[[4, 5]]),
                          map(x -> round(x, digits=8), self.update_windows[[4, 5]] .* self.δω),
-                         map(x -> round(x, digits=8), self.accept_rates[[6, 7, 11]]),
-                         map(x -> round(x, digits=8), self.update_windows[[6, 7]].* self.δω),
-                         [round(self.update_windows[11]* self.δω, digits=8)],
+                         map(x -> round(x, digits=4), self.accept_rates[[6, 7, 11]]),
+                         map(x -> round(x, digits=10), self.update_windows[[6, 7, 11]].* self.δω),
                          dims=1)
             writedlm(f, [output], ',')
         end
@@ -1488,7 +1507,7 @@ function run(A_0_in=false, N_p_in=false)
     sac.Gbar_new = similar(sac.Gbar)
     sac.χ2 = calc_χ2(sac)
     sac.χ2_min = sac.χ2
-    sac.update_windows .= sac.ω_window / 10
+    sac.update_windows .= sac.ω_window / 100
   
     θ = sac.θ_0
 
@@ -1500,10 +1519,11 @@ function run(A_0_in=false, N_p_in=false)
     
     #STEP 2
    
-  
+    sac.indiv_update = true
     write_log(sac, "Beginning Initial Sampling.")
     initial_sampling(sac, θ)
     if sac.χ2_min > 1000 * sac.N_τ # Run initialization again if χ2 is too high first time 
+        write_log(sac, "Restarting Initial Sampling.")
         sac.indiv_update = true
         read_G!(sac)
         initialize!(sac)
@@ -1511,10 +1531,11 @@ function run(A_0_in=false, N_p_in=false)
         sac.Gbar_new = similar(sac.Gbar)
         sac.χ2 = calc_χ2(sac)
         sac.χ2_min = sac.χ2
-        sac.update_windows .= sac.ω_window / 10
+        sac.update_windows .= sac.ω_window / 100
         initial_sampling(sac, θ)
         # sac.indiv_update = false
     end
+    sac.indiv_update = false
     write_log(sac, "Initial Sampling Finished.")
 
     #STEP 3
