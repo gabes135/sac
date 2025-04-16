@@ -28,6 +28,7 @@ For proper normalization of the *finite temperature* fermionic spectral function
 ***If you generate your G(τ) data using either***
  * ***a zero temperature QMC method and the spectral function is for a fermionic operator***
  * ***a finite temperature QMC method and the spectral function is for a bosonic operator***
+ 
 ***then use `make_tin_zeroT.jl`, which treats the normalization of A(ω) differently. In this case, the only required τ point is G(τ = 0). Make sure to change the the inverse temperature β set in the `run` function in `make_tin_zero.jl` (if bosonic, for zero temperature fermionic, this value ignored). ***
 
 
