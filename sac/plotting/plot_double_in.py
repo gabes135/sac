@@ -17,9 +17,10 @@ ax = plt.gca()
 # plt.plot(df.omega, df.S, c = 'k', zorder= 1, lw = 2)#, label = 'Artificial Spectrum')
 
 # Change to location of output spectrum
-# folder = "../fermion/edge/out_files/t3_double_in/Nw80/Ac_0.000/p_0.500/Ar_0.500"
+# folder = "../edge/out_files/t3_double_in/Nw80/Ac_0.000/p_0.500/Ar_0.500"
 
-folder = "../fermion/edge/out_files/1D_tJ/04_pi2_double_in/Nw80/Ac_0.000/p_0.500/Ar_0.500"
+folder = "../edge/out_files/1D_tJ/04_pi2_double_in/Nw80/Ac_0.000/p_0.500/Ar_0.500"
+folder = "../edge/out_files/1D_tJ/04_pi8_double_in/Nw_200/Ac_0.000/p_0.500/Ar_0.600"
 
 spec = 'd'
 n = 0
@@ -38,7 +39,7 @@ plt.plot(x_interp, R_interp+L_interp, c= 'b')
 
 
 plt.rcParams['font.family'] = 'monospace'
-plt.text(0.5, 0.85, 'double_edge_in', ha = 'center', va = 'top', size =15, transform = ax.transAxes)
+# plt.text(0.5, 0.85, 'double_edge_in', ha = 'center', va = 'top', size =15, transform = ax.transAxes)
 
 plt.ylim(0, 8)
 plt.xlim(-2, 3)
@@ -46,6 +47,6 @@ plt.xlim(-2, 3)
 plt.ylabel(r"$A(\omega)$")
 plt.xlabel(r"$\omega$")
 
-# plt.savefig("figs/t3.jpg", bbox_inches='tight')
+plt.savefig("figs/1D_tJ_04_pi8_Ar6.pdf", dpi = 300, bbox_inches='tight')
 
 plt.show()

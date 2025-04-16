@@ -1,0 +1,12 @@
+80 1000
+-10.0 10.0 0.005 0.00001
+0.5 0.0 0.5
+10 1.05 200 0.5
+300 1000 20
+in_files/tJ_1D_J04/pi8/t.in out_files/tJ_1D_J04/pi8
+1 0
+
+
+in_files/tJ_1D_J04/pi8/t.in out_files/tJ_1D_J04/pi8
+in_files/tJ_1D_J04/pi2/t.in out_files/tJ_1D_J04/pi2
+in_files/tJ_double_edge_cont/t.in out_files/tJ_double_edge_cont

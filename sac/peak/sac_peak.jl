@@ -73,6 +73,9 @@ Base.@kwdef mutable struct SAC
 
     edge_res::Array{Float64, 2} = zeros(3, 2) # Sampled location(s) of peak edge(s)
 
+    fix_edge::Int64 = 0 # if 0 edge is sampled,
+                      # if 1 edge is fixed to ω_0 (only for N_p == 1)
+
     kernel_type::Symbol # finiteT or zeroT or bosonic
 
     symm::Int64 # For fermionic spectral functions only!
@@ -166,15 +169,21 @@ function initialize!(self::SAC)
     self.cont_n = (1+self.N_ω+2*self.N_p):(2*self.N_ω+2*self.N_p)
 
     # Initial guess for location and amplitude of pos./neg. peaks
-    A0_p = self.A_0/(1 + (1/self.approx_ratio))#.21#
-    A0_n = self.A_0/(1 + self.approx_ratio)#.49#
+    A0_p = self.A_0/(1 + (1/self.approx_ratio))
+    A0_n = self.A_0/(1 + self.approx_ratio)
 
+    # A0_p = .21
+    # A0_n = .49
 
-
-    ωi_array[self.peak_p] .= floor(Int64, ω_window)#floor(Int64, 1/self.δω)#
+    if self.fix_edge == 1
+        ωi_array[self.peak_p] .= floor(Int64, ωi_0)
+        ωi_array[self.peak_n] .= floor(Int64, ωi_0)
+    else
+        ωi_array[self.peak_p] .= floor(Int64, ω_window)
+        ωi_array[self.peak_n] .= floor(Int64, ω_window)
+    end
+   
     A_array[self.peak_p] .= A0_p/self.N_p # distributed evenly amongst the peak δ's
-
-    ωi_array[self.peak_n] .= floor(Int64, ω_window)#floor(Int64, .5/self.δω)#floor(Int64, ω_window)
     A_array[self.peak_n] .= A0_n/self.N_p # distributed evenly amongst the peak δ's
   
     # Right-most edge of peak feature
@@ -195,14 +204,11 @@ function initialize!(self::SAC)
 
     # Distribute remaining weight evenly amongst all continu (equal ration between pos./neg.)
     Ac = (1-self.A_0)/2
-    Ac_p = (1-self.A_0)/(1 + (1/self.approx_ratio))#.1#
-    Ac_n = (1-self.A_0)/(1 + self.approx_ratio)#.2#
+    Ac_p = (1-self.A_0)/(1 + (1/self.approx_ratio))
+    Ac_n = (1-self.A_0)/(1 + self.approx_ratio)
 
-    A_array[self.cont_p] .= (1:self.N_ω)
-    A_array[self.cont_n] .= (1:self.N_ω)
-    
-    A_array[self.cont_p] .*= Ac_p/sum(1:self.N_ω) 
-    A_array[self.cont_n] .*= Ac_n/sum(1:self.N_ω)
+    A_array[self.cont_p] .= ((1:self.N_ω)./sum(1:self.N_ω)) * (Ac_p)
+    A_array[self.cont_n] .= ((1:self.N_ω)./sum(1:self.N_ω)) * (Ac_n)
 
     # If symm, then only sample positive freq. axis
     if self.symm == 1 || self.kernel_type == :bosonic
@@ -220,7 +226,7 @@ function initialize!(self::SAC)
         ωi_array[self.peak_n] .= 0
         ωi_array[self.cont_n] .= 0
     else
-        A_array ./= sum(A_array) 
+        A_array ./= sum(A_array)
     end
     
     println([A0_p, A0_n])
@@ -785,6 +791,7 @@ function cont_Aω_transfer(self::SAC, θ::Float64)
     
 end
 
+# Update that transfers weight between pos. and neg. peaks
 
 # Update that transfers weight between pos. and neg. peaks's while preserving first moment
 # of two updated δ's
@@ -872,9 +879,6 @@ function peak_Aω_transfer(self::SAC, θ::Float64)
     return accept_rate/10
 end
 
-
-# Update that transfers weight between pos. and neg. peaks and continua at same time, while preserving first moment
-# of four updated δ's
 function Aω_transfer(self::SAC, θ::Float64)
 
     accept_rate = 0.
@@ -1018,21 +1022,20 @@ function run_updates(self::SAC, θ::Float64, transfer::Bool=true)
             ar = cont_Aω_transfer(self, θ)
             self.accept_rates[6] += ar
 
-            #a_r 7 shift weight between pos. and neg. peaks
+
             ar = peak_Aω_transfer(self, θ)
             self.accept_rates[7] += ar
         end
 
-        #a_r 1 combined update that shifts weight between pos. and neg. peaks and continua at same time
         ar = Aω_transfer(self, θ)
         self.accept_rates[11] += ar
-       
+        # self.accept_rates[11] += ar
 
     end
 
 
     for pn in pns
-        ar = single_ω_move(self, θ, pn) #a_r 1 and 8 (pos and neg)
+        ar = single_ω_move(self, θ, pn) #a_r 1 and 8
         self.accept_rates[1 + (pn-1)*7] += ar
         
         ar = double_ω_move(self, θ, pn) #a_r 2 and 9
@@ -1042,13 +1045,14 @@ function run_updates(self::SAC, θ::Float64, transfer::Bool=true)
         self.accept_rates[3 + (pn-1)*7] += ar
 
     end
-
-    ar = single_ω_pmove(self, θ, 1) #a_r 4 move positions of single macro delta (+ axis)
-    self.accept_rates[4] += ar
-    
-    if sample_neg
-        ar = single_ω_pmove(self, θ, 2) #a_r 5 move positions of single macro delta (- axis)
-        self.accept_rates[5] += ar
+    if self.fix_edge != 1
+        ar = single_ω_pmove(self, θ, 1) #a_r 4 move positions of single macro delta (+ axis)
+        self.accept_rates[4] += ar
+        
+        if sample_neg
+            ar = single_ω_pmove(self, θ, 2) #a_r 5 move positions of single macro delta (- axis)
+            self.accept_rates[5] += ar
+        end
     end
 
     # self.ωi_array[self.peak_p] .= self.ωi_array[self.peak_n]
@@ -1075,22 +1079,16 @@ function adjust_windows(self::SAC, steps::Int64, θ::Float64)
         self.accept_rates /= (steps ÷ 10)
 
         for k=1:11
-            if self.accept_rates[k] > 0.8
-                self.update_windows[k] *= 2
-            elseif self.accept_rates[k] < 0.2
-                self.update_windows[k] /= 2
-            elseif self.accept_rates[k] > 0.55
+            # if self.accept_rates[k] > 0.8
+            #     self.update_windows[k] *= 2
+            # elseif self.accept_rates[k] < 0.2
+            #     self.update_windows[k] /= 2
+            if self.accept_rates[k] > 0.55
                 self.update_windows[k] *= 1.2
             elseif self.accept_rates[k] < 0.45
                 self.update_windows[k] /= 1.2
             end   
-
-            # if self.update_windows[k]*self.δω < (1e-3/self.N_ω)
-            #     self.update_windows[k] = 1e-3/(self.δω*self.N_ω)
-            # end
         end
-
-
         
     end
 
@@ -1271,26 +1269,18 @@ end
 ###########################################################################################
 
 # Higher temp intialization steps
-function initial_sampling(self, θ_0)
+function intial_sampling(self, θ_0)
 
-    # adjust_windows(self, self.anneal_steps*2, 10*θ_0)
+    adjust_windows(self, self.anneal_steps, 10*θ_0)
+    adjust_windows(self, self.anneal_steps, 5*θ_0)
+    adjust_windows(self, self.anneal_steps, 2*θ_0)
 
-    for i=1:40
-        θ = θ_0 * (11-(i/4))
-        steps = self.anneal_steps ÷ 2
-        adjust_windows(self, steps, θ)
-        sample(self, steps, θ)
-
-    end
-
-
-    #adjust_windows(self, self.anneal_steps*10, 5*θ_0)
-    #adjust_windows(self, self.anneal_steps*10, 2*θ_0)
-
-    # sample(self, self.anneal_steps*10, 10*θ_0)
-    # sample(self, self.anneal_steps*5, 5*θ_0)
-    # sample(self, self.anneal_steps*5, 2*θ_0)
-
+    # for i=1:10
+    #     θ = θ_0 * (11-i)
+    #     steps = self.anneal_steps #* i
+    #     adjust_windows(self, steps, θ)
+    #     # sample(self, steps, θ)
+    # end
 
 end
 
@@ -1321,26 +1311,26 @@ function run_anneal(self, θ_0, wr=false)
             Ac_n = sum(self.A_array[self.cont_n])
         end
         
-        
+        # Only print 4, digits
         open(self.anneal_file, "a") do f
-            writedlm(f, [[i, map(x -> round(x, digits=8), 
+            writedlm(f, [[i, map(x -> round(x, digits=4), 
                           [θ, self.χ2_min/self.N_τ, self.sampled_χ2/self.N_τ,
                            edge_p, edge_n, A0_p, A0_n, Ac_p, Ac_n])...]], ',')
         end
 
         # Write acceptance rates
-            open(self.accept_rate_file, "a") do f
-            output = cat([i], 
-                         map(x -> round(x, digits=4), self.accept_rates[[1, 2, 3, 8, 9, 10]]),
-                         map(x -> round(x, digits=8), self.update_windows[[1, 2, 8, 9]] .* self.δω),
-                         map(x -> round(x, digits=4), self.accept_rates[[4, 5]]),
-                         map(x -> round(x, digits=8), self.update_windows[[4, 5]] .* self.δω),
-                         map(x -> round(x, digits=4), self.accept_rates[[6, 7, 11]]),
-                         map(x -> round(x, digits=10), self.update_windows[[6, 7, 11]].* self.δω),
-                         dims=1)
-            writedlm(f, [output], ',')
-        end
-    
+        open(self.accept_rate_file, "a") do f
+        output = cat([i], 
+                     map(x -> round(x, digits=4), self.accept_rates[[1, 2, 3, 8, 9, 10]]),
+                     map(x -> round(x, digits=8), self.update_windows[[1, 2, 8, 9]] .* self.δω),
+                     map(x -> round(x, digits=4), self.accept_rates[[4, 5]]),
+                     map(x -> round(x, digits=8), self.update_windows[[4, 5]] .* self.δω),
+                     map(x -> round(x, digits=4), self.accept_rates[[6, 7, 11]]),
+                     map(x -> round(x, digits=8), self.update_windows[[6, 7]].* self.δω),
+                     [round(self.update_windows[11]* self.δω, digits=8)],
+                     dims=1)
+        writedlm(f, [output], ',')
+    end
 
        
         if wr
@@ -1409,21 +1399,21 @@ function final_anneal(self::SAC, θ_opt::Float64)
 
     open(self.sample_file, "a") do f
         writedlm(f, [[0, 
-                      round(a, digits=8), round(θ, digits=8), 
-                      round(self.χ2_min/self.N_τ, digits=8), round(self.sampled_χ2/self.N_τ, digits=8),
-                      round(self.edge_res[2, 1], digits=8), round(-self.edge_res[2, 2], digits=8), 
-                      round(self.edge_res[3, 1], digits=8), round(self.edge_res[3, 2], digits=8), 
-                      round(A0_p, digits=8), round(A0_n, digits=8),
-                      round(Ac_p, digits=8), round(Ac_n, digits=8)]], ',')
+                      round(a, digits=4), round(θ, digits=4), 
+                      round(self.χ2_min/self.N_τ, digits=4), round(self.sampled_χ2/self.N_τ, digits=4),
+                      round(self.edge_res[2, 1], digits=4), round(-self.edge_res[2, 2], digits=4), 
+                      round(self.edge_res[3, 1], digits=4), round(self.edge_res[3, 2], digits=4), 
+                      round(A0_p, digits=4), round(A0_n, digits=4),
+                      round(Ac_p, digits=4), round(Ac_n, digits=4)]], ',')
     end
 
     open(self.accept_rate_file, "a") do f
         output = cat([0], 
-                     map(x -> round(x, digits=8), self.accept_rates[[1, 2, 3, 8, 9, 10]]),
-                     map(x -> round(x, digits=8), self.update_windows[[1, 2, 8, 9]] .* self.δω),
-                     map(x -> round(x, digits=8), self.accept_rates[[4, 5]]),
-                     map(x -> round(x, digits=8), self.update_windows[[4, 5]] .* self.δω),
-                     map(x -> round(x, digits=8), self.accept_rates[[6, 7, 11]]),
+                     map(x -> round(x, digits=4), self.accept_rates[[1, 2, 3, 8, 9, 10]]),
+                     map(x -> round(x, digits=4), self.update_windows[[1, 2, 8, 9]] .* self.δω),
+                     map(x -> round(x, digits=4), self.accept_rates[[4, 5]]),
+                     map(x -> round(x, digits=4), self.update_windows[[4, 5]] .* self.δω),
+                     map(x -> round(x, digits=4), self.accept_rates[[6, 7, 11]]),
                      map(x -> round(x, digits=8), self.update_windows[[6, 7]].* self.δω),
                      [round(self.update_windows[11], digits=8)],
                      dims=1)
@@ -1455,7 +1445,7 @@ function run(A_0_in=false, N_p_in=false)
     θ_0, f_anneal, a_criterion = in_file[3, :]
     N_anneal, anneal_steps, sample_steps = in_file[4, :]
     G_file, output_folder = in_file[5, :]
-    symm, kernel_type = in_file[6, 1], Symbol(in_file[6, 2])
+    fix_edge, symm, kernel_type = in_file[6, 1], in_file[6, 2], Symbol(in_file[6, 3])
     
    
     
@@ -1469,9 +1459,15 @@ function run(A_0_in=false, N_p_in=false)
 
     if kernel_type == :bosonic
         symm = 0
-
     elseif symm == 1
         output_folder *= "_symm"
+    end
+
+    if fix_edge != 0
+        ω_0 = fix_edge
+        fix_edge = 1
+    else
+        ω_0 = 0
     end
 
     output_folder = output_folder * @sprintf("/Np_%02i/A0_%.3f", N_p, A_0)
@@ -1491,8 +1487,9 @@ function run(A_0_in=false, N_p_in=false)
             sample_file=string(output_folder, "/sample.csv"),
             accept_rate_file=string(output_folder, "/accept_rate.csv"), 
             output_folder=output_folder,
-            kernel_type=kernel_type, symm=symm)
-
+            fix_edge=fix_edge, kernel_type=kernel_type, symm=symm)
+    
+    sac.ω_0 = ω_0
 
     # Initialization
     init_outfiles(sac)
@@ -1507,7 +1504,7 @@ function run(A_0_in=false, N_p_in=false)
     sac.Gbar_new = similar(sac.Gbar)
     sac.χ2 = calc_χ2(sac)
     sac.χ2_min = sac.χ2
-    sac.update_windows .= sac.ω_window / 100
+    sac.update_windows .= sac.ω_window / 10
   
     θ = sac.θ_0
 
@@ -1519,11 +1516,10 @@ function run(A_0_in=false, N_p_in=false)
     
     #STEP 2
    
-    sac.indiv_update = true
+  
     write_log(sac, "Beginning Initial Sampling.")
-    initial_sampling(sac, θ)
+    intial_sampling(sac, θ)
     if sac.χ2_min > 1000 * sac.N_τ # Run initialization again if χ2 is too high first time 
-        write_log(sac, "Restarting Initial Sampling.")
         sac.indiv_update = true
         read_G!(sac)
         initialize!(sac)
@@ -1531,11 +1527,10 @@ function run(A_0_in=false, N_p_in=false)
         sac.Gbar_new = similar(sac.Gbar)
         sac.χ2 = calc_χ2(sac)
         sac.χ2_min = sac.χ2
-        sac.update_windows .= sac.ω_window / 100
-        initial_sampling(sac, θ)
+        sac.update_windows .= sac.ω_window / 10
+        intial_sampling(sac, θ)
         # sac.indiv_update = false
     end
-    sac.indiv_update = false
     write_log(sac, "Initial Sampling Finished.")
 
     #STEP 3
@@ -1544,6 +1539,7 @@ function run(A_0_in=false, N_p_in=false)
     write_log(sac, "Anneal Finished.")
 
     
+    #write_spec(sac, 0)
 
 
     a_vals = (sac.χ2_anneal .- sac.χ2_min) ./ sqrt(2*sac.χ2_min)
@@ -1559,7 +1555,10 @@ function run(A_0_in=false, N_p_in=false)
     
 
     sac.update_windows .= sac.ω_window / 10
-
+    # sac.update_windows[[6, 7]] .= A_0/sac.N_ω
+    # sac.update_windows[6] = A_0/sac.N_ω
+    # sac.update_windows[6] = A_0/sac.N_ω
+    
 
     
     #STEP 4

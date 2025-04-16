@@ -1,0 +1,12 @@
+2025-02-07T15:43:45.813 - N_ω, N_e, A_e, A_c, p = 200, 200, 1.0, 0.0,0.5
+2025-02-07T15:43:45.875 - Beginning Initialization.
+2025-02-07T15:43:45.885 - Using rightward and leftward decaying spectrum (double edge).
+2025-02-07T15:43:45.885 - Reading G_file.
+2025-02-07T15:43:46.522 - Initializing Kernel.
+2025-02-07T15:44:01.859 - Initializing struct.
+2025-02-07T15:44:01.878 - Finding Best Initial Configuration.
+2025-02-07T15:44:13.431 - Initialization Finished.
+2025-02-07T15:46:34.276 - Beginning Main Anneal.
+2025-02-07T16:59:55.732 - Main Anneal Finished.
+2025-02-07T16:59:55.733 - Beginning Final Sampling.
+2025-02-07T17:59:44.341 - Final Sampling Finished.

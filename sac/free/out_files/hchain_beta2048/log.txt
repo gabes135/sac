@@ -1,7 +1,7 @@
-2025-03-06T13:07:58.441 - Initialization Finished.
-2025-03-06T13:07:58.441 - Beginning Equillibration.
-2025-03-06T13:08:00.689 - Equillibration Finished.
-2025-03-06T13:08:00.689 - Beginning Main Anneal.
-2025-03-06T13:08:26.697 - Main Anneal Finished.
-2025-03-06T13:08:26.697 - Beginning Final Anneal.
-2025-03-06T13:08:45.036 - Final Anneal Finished.
+2025-03-24T14:06:52.918 - Initialization Finished.
+2025-03-24T14:06:52.919 - Beginning Equillibration.
+2025-03-24T14:06:54.919 - Equillibration Finished.
+2025-03-24T14:06:54.919 - Beginning Main Anneal.
+2025-03-24T14:07:22.320 - Main Anneal Finished.
+2025-03-24T14:07:22.335 - Beginning Final Anneal.
+2025-03-24T14:07:40.261 - Final Anneal Finished.
