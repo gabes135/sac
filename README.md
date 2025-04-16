@@ -45,5 +45,5 @@ Running `make_tin.jl` will generate a `t.in` file containing G(τ) averaged over
 
 
 
-After generating, renaming, and moving the `t.in file`, navigate to the folder corresponding to the SAC paramterization you want to use ([`sac/free`](./sac/free/README.md), ([`sac/peak`](./sac/peak/README.md), or [`sac/edge`](./sac/edge/README.md)), and follow the instructions in the README.md files (follow hyperlinks above).
+After generating, renaming, and moving the `t.in` file, navigate to the folder corresponding to the SAC paramterization you want to use ([`sac/free`](./sac/free/README.md), ([`sac/peak`](./sac/peak/README.md), or [`sac/edge`](./sac/edge/README.md)), and follow the instructions in the README.md files (follow hyperlinks above).
 
