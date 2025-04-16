@@ -1,4 +1,0 @@
-2025-03-24T14:14:07.359 - Initialization Finished.
-2025-03-24T14:14:07.359 - Beginning Equillibration.
-2025-03-24T14:15:27.068 - Equillibration Finished.
-2025-03-24T14:15:27.069 - Beginning Main Anneal.
