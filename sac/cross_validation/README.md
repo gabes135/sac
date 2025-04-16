@@ -18,7 +18,7 @@ Before running the program, modify the `in_{param}.in` file with the appropriate
 	1. `folder`: the name of the folder containing the input/output files
 	2. `reps`: the number of sampling and validation data sets
 	3. `param`: the SAC parameterization (`free`, `peak`, or `edge`). If `peak` or `edge`, include the parameters that are used in the ouput directory, i.e. `peak/Np_01/A0_0.700`
-For each rep, the validation $\chi^2$ is calculated treating set a as the sampling set and b as the validation, then the roles are reversed. The final values for this rep are the average of these two 'rotations.' The results are written to the file `out_files/{folder}/chi2/{param}.csv`, and contains the validation $\chi^2$ at each temperature step in the annealing run (columns) for each rep (rows). The results can be analyzed in the included Jupyter notebook.
+For each rep, the validation $\chi^2$ is calculated treating set a as the sampling set and b as the validation, then the roles are reversed. The final values for this rep are the average of these two 'rotations.' The results are written to the file `out_files/{folder}/chi2/{param}.csv`, and contains the validation $\chi^2$ at each temperature step in the annealing run (columns) for each rep (rows). The results can be analyzed in the included [Jupyter notebook](./plot_results.ipynb).
 
 
 
