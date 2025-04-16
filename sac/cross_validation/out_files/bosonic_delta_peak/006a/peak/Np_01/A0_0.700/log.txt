@@ -1,0 +1,6 @@
+2025-04-16T14:30:09.606 - Beginning Initialization.
+2025-04-16T14:30:16.761 - Initialization Finished.
+2025-04-16T14:30:16.761 - Beginning Initial Sampling.
+2025-04-16T14:30:20.161 - Initial Sampling Finished.
+2025-04-16T14:30:20.162 - Beginning Anneal.
+2025-04-16T14:33:32.945 - Main Anneal Finished.
