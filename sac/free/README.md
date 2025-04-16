@@ -1,5 +1,5 @@
 # sac - Julia code to run the Stochastic Analytic Continuation Method
-Currently supports unconstrained sampling, the $\delta$-function edge parameterization, and the monotonic edge constrained parameterization for fermionic or bosonic spectral functions.
+Currently supports unconstrained sampling, the $\delta$-function edge parameterization, and the power-law edge constrained parameterization for fermionic or bosonic spectral functions.
 
 ## Instructions for running unconstrained sampling
 
@@ -28,7 +28,7 @@ For this verion of the program, the user must set the *kernel type*:
 |-----------|----------------|----|
 | `zeroT` | $G(\tau) = \int_{-\infty}^{\infty} d\omega   e^{-\tau \omega }  A(\omega)$ | $A(-\omega) = A(\omega)$ or $A(-\omega) \neq A(\omega)$  |
 | `finiteT`  | $G(\tau) = \int_{-\infty}^{\infty} d\omega  \frac{e^{-\tau \omega } }{1 + e^{-\beta \omega}}A(\omega)$ | $A(-\omega) = A(\omega)$ or $A(-\omega) \neq A(\omega)$  |
-| `bosonic`    | $G(\tau) = \int_{-\infty}^{\infty} d\omega  e^{-\tau \omega } A(\omega) =   \int_{0}^{\infty} d\omega   \left(e^{-\tau \omega } + e^{-(\beta - \tau) \omega } \right)  A(\omega)$ | $A(-\omega) = e^{-\beta \omega} A(\omega)$ enforced explicitly and only positive frequency axis sampled |
+| `bosonic`    | $G(\tau) = \int_{-\infty}^{\infty} d\omega  e^{-\tau \omega } A(\omega) =   \int_{0}^{\infty} d\omega   \left(e^{-\tau \omega } + e^{-(\beta - \tau) \omega } \right)  A(\omega)$ | $A(-\omega) = e^{-\beta \omega} A(\omega)$ enforced explicitly and only positive frequency axis sampled (symm ignored) |
 
 
 ### Run SAC

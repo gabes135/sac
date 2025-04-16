@@ -229,9 +229,9 @@ function initialize!(self::SAC)
         A_array ./= sum(A_array)
     end
     
-    println([A0_p, A0_n])
-    println([ωi_pp, ωi_np].* self.δω)
-    println([Ac_p, Ac_n])
+    # println([A0_p, A0_n])
+    # println([ωi_pp, ωi_np].* self.δω)
+    # println([Ac_p, Ac_n])
     # Initializing Kernel
 
 
@@ -1313,7 +1313,7 @@ function run_anneal(self, θ_0, wr=false)
         
         # Only print 4, digits
         open(self.anneal_file, "a") do f
-            writedlm(f, [[i, map(x -> round(x, digits=4), 
+            writedlm(f, [[i, map(x -> round(x, digits=8), 
                           [θ, self.χ2_min/self.N_τ, self.sampled_χ2/self.N_τ,
                            edge_p, edge_n, A0_p, A0_n, Ac_p, Ac_n])...]], ',')
         end
@@ -1399,7 +1399,7 @@ function final_anneal(self::SAC, θ_opt::Float64)
 
     open(self.sample_file, "a") do f
         writedlm(f, [[0, 
-                      round(a, digits=4), round(θ, digits=4), 
+                      round(a, digits=4), round(θ, digits=8), 
                       round(self.χ2_min/self.N_τ, digits=4), round(self.sampled_χ2/self.N_τ, digits=4),
                       round(self.edge_res[2, 1], digits=4), round(-self.edge_res[2, 2], digits=4), 
                       round(self.edge_res[3, 1], digits=4), round(self.edge_res[3, 2], digits=4), 

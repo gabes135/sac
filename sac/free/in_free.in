@@ -2,7 +2,7 @@
 1000 -15. 15. 0.00001 0.005
 10 1.1 1.05 0.5 0.5
 150 500 5000
-../in_files/hchain_beta2048.in out_files/hchain_beta2048
+../in_files/peak/t_b.in out_files/bosonic_delta_peak
 1 bosonic
 
 ######################################################################
