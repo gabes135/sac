@@ -37,7 +37,7 @@ function read_data(self::TimeCors.TimeCor, ab=0)
     
     
     τ_array = readdlm(self.τ_grid_file)
-    N_τ = length(τ_array) - 1 # minus two to account for normalization points G(0)
+    N_τ = length(τ_array) - 1 # minus two to account for normalization point G(0)
 
     cor_data = readdlm(self.cor_file)
 
@@ -187,7 +187,7 @@ function run(rep, folder)
 
         Random.seed!(rep)
 
-        β = 2048 # arbitrary large value
+        β = 2048 #
 
         N_boot = 10000 # No need to change this
 

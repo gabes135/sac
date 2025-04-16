@@ -2,7 +2,7 @@
 1000 -15. 15. 0.00001 0.005
 10 1.1 1.05 0.5 0.5
 150 500 5000
-in_files/bosonic_delta_peak out_files/bosonic_delta_peak
+in_files/hchain_beta2048 out_files/hchain_beta2048
 1 bosonic
 
 ######################################################################
@@ -14,3 +14,5 @@ in_files/bosonic_delta_peak out_files/bosonic_delta_peak
 6: G_folder, output folder ## name of input G(tau) file, name of output file
 5: symm, kernel type ## whether to enforce A(-omega) = A(omega) (1) are sample A(omega) across the full freq. axis (0), which type of kernel to use when converting A(ω) to G(τ) ('zeroT' or 'finiteT' or 'bosonic')
 
+
+../in_files/hchain_beta2048.in out_files/hchain_beta2048

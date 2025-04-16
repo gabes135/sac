@@ -1,10 +1,11 @@
-reps=$1
+folder=$1
+reps=$2
 
 cd process_G 
 for r in $(seq 1 $reps);
 do
-    julia make_tin_cv.jl ../in_files/hchain_beta2048 $r
+    julia make_tin_cv.jl "../in_files/$folder" $r
 
-    julia cross_val.jl free 1
+    # julia cross_val.jl free 1
 done
 
