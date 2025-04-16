@@ -47,3 +47,6 @@ Running `make_tin.jl` will generate a `t.in` file containing G(τ) averaged over
 
 After generating, renaming, and moving the `t.in` file, navigate to the folder corresponding to the SAC paramterization you want to use ([`sac/free`](./sac/free/README.md), ([`sac/peak`](./sac/peak/README.md), or [`sac/edge`](./sac/edge/README.md)), and follow the instructions in the README.md files (follow hyperlinks above).
 
+This library also contains code to run cross validation as a tool for model selection. This can be used to select the most appropriate SAC paramaterization when multiple can produce spectra with acceptable $\chi^2$ values. You can find details on the implmentation [here](./sac/cross_validation/README.md).
+
+
