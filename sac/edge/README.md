@@ -2,7 +2,7 @@
 Currently supports unconstrained sampling, the $\delta$-function edge parameterization, and the power-law edge constrained parameterization for fermionic or bosonic spectral functions.
 
 
-## Instructions for running the monotonic edge constrained parameterization
+## Instructions for running the power-law edge constrained parameterization
 
 
 ### Set SAC parameters 
@@ -34,7 +34,7 @@ For this verion of the program, the user must set the *kernel type*:
 
 
 
-The user also must the *mode* (which type of edge spectrum to resolve). The names of the modes and examples of the spectra they produce, using artificial spectra (black) and synthetic QMC data, are shown below (blue).
+The user also must set the *mode* (which type of edge spectrum to resolve). The names of the modes and examples of the spectra they produce, using artificial spectra (black) and synthetic QMC data, are shown below (blue).
 
 #### Examples:
 
