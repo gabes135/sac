@@ -38,7 +38,7 @@ If `symm = 0` and you are not using the bosonic kernel, then the macroscopic $\d
 Symmetric fermionic spectral funciton (`symm = 1` and `kernel_type = finiteT`) with $A_0 = 0.7$:
 ![fermionic_symm](../plotting/figs/peak_fermionic1.png)
 
-Non-symmetric fermionic spectral funciton (`symm = 0` and `kernel_type = finiteT`) with $A_0 = 0.7$ ($A^+_0 = 0.2$ and $A^-_0 = 0.5$):
+Asymmetric fermionic spectral funciton (`symm = 0` and `kernel_type = finiteT`) with $A_0 = 0.7$ ($A^+_0 = 0.2$ and $A^-_0 = 0.5$):
 ![fermionic_nonsymm](../plotting/figs/peak_fermionic2.png)
 
 ### Run SAC
