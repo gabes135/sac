@@ -3,7 +3,9 @@ Currently supports unconstrained sampling, the $\delta$-function edge parameteri
 
 ## The Stochastic Analytic Continuation (SAC) Method
 This library contains programs that can be used to solve the challenging inverse problem of numerical analytic continuation using the SAC method. Provided QMC-generated data imaginary time correlation function G(τ), the SAC method will generate a spectral function S(ω) satisfying the integral
-$$G(\tau) = \int_{\infty}^{\infty} K(\tau, \omega) S(\omega)$$,
+
+$$G(\tau) = \int_{\infty}^{\infty} K(\tau, \omega) S(\omega),$$
+
 where $K(\tau, \omega)$ is the kernel, specific to the type of spectral function being resolved. 
 
 Where SAC differs from many other numerical analytic contination methods is that it represents the spectrum as a sum of many $\delta$-function, and relies on the stochastic averaging of $\delta$-function configurations to produce a smooth $S(\omega)$. This also allows for the resolution of spectra with sharp features, by imposing appropriate constraints on the sampling space of the $\delta$-functions.
