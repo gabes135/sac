@@ -1,7 +1,4 @@
-# sac - Julia code to run the Stochastic Analytic Continuation Method
-Currently supports unconstrained sampling, the $\delta$-function edge parameterization, and the power-law edge constrained parameterization for fermionic or bosonic spectral functions.
-
-## Instructions for running delta-edge sampling
+## Instructions for running the delta-peak constrained parameterization
 
 
 ### Set SAC parameters 

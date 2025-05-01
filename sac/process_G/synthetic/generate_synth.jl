@@ -78,7 +78,7 @@ function init_weights(self::Synths.Synth)
         end
     end
 
-    if self.spec_type == 1 || self.spec_type == 2 || self.spec_type == 3
+    if self.spec_type == 1 || self.spec_type == 2 || self.spec_type == 3 || self.spec_type == 7
         for i=1:self.N_G
             self.AGs[i] /= (sqrt(2 * pi) * self.σGs[i])
         end
@@ -112,6 +112,11 @@ function write_spec(self::Synths.Synth)
     elseif self.spec_type == 6
         ωm = self.ω0_n
         ωm_n = self.ω0
+    elseif self.spec_type == 7
+        ωm = maximum(abs.(self.ωGs) .+ (8 .* self.σGs))
+      
+        ωm_n = -ωm
+    
     end
     if self.spec_type == 1 &&  self.A_minus > 0
         δω_p = (ωm - self.ω0) / N_ω
@@ -341,6 +346,12 @@ function get_spec(self::Synths.Synth, ω::Float64, spec_type=0)
             s += self.AGs[n] * exp(-((self.ωGs[n] - ω) ^ 2)/(2 * (self.σGs[n]^2)))
         end
         #end
+    #fermionic gaussians
+    elseif spec_type == 7
+        for n=1:self.N_G
+            s += self.AGs[n] * exp(-((self.ωGs[n] - ω) ^ 2)/(2 * (self.σGs[n]^2)))
+        end
+        #end
     end
     return s
 end
@@ -557,6 +568,9 @@ function make_G_tau(self::Synths.Synth)
     elseif self.spec_type == 6
         ωm_n = self.ω0
         ωm = self.ω0_n
+    elseif self.spec_type == 7 
+        ωm = maximum(abs.(self.ωGs) .+ (10 .* self.σGs))
+        ωm_n = -ωm
     end
 
     
@@ -609,7 +623,7 @@ function make_G_tau(self::Synths.Synth)
             d = quadgk(ω -> integrand(self, τ, ω), self.ω0, ωm, rtol=1e-13)[1]
             # println([a, b])
             G0_val = a+b+c+d#quadgk(ω -> integrand(self, τ, ω), ωm_n, -self.ω0, rtol=1e-13)[1]
-        elseif  self.spec_type == 6
+        elseif  self.spec_type > 5
             G0_val = quadgk(ω -> integrand(self, τ, ω), ωm_n, ωm, rtol=1e-13)[1]
         end
 
@@ -649,6 +663,8 @@ function add_noise(self::Synths.Synth)
         σ = self.σ * self.G0
     elseif self.spec_type == 6 && self.ω0 > 0
         σ = self.σ * self.G0[1]
+    elseif self.spec_type == 7
+        σ = self.σ * (self.G0[1] + self.G0[end])
     else
         σ = self.σ * (self.G0[1] * 2)
     end
