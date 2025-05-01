@@ -2,6 +2,8 @@
 
 The functions contained in this folder can be used to run a cross validation procedure as a tool for model selection. This can be read about in depth in our [PRE article](https://arxiv.org/pdf/2406.06763).
 
+![cv](./cv_diagram.png)
+
 ## Instructions for running the cross validation procedure
 
 * Collect your QMC-generated bins in a `cor.dat` and `tgrid.dat` file as detailed [here](../../README.md) and copy to the `process_G` folder in this directory.
