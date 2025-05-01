@@ -2,7 +2,7 @@
 Currently supports unconstrained sampling, the $\delta$-function edge parameterization, and the power-law edge constrained parameterization for fermionic or bosonic spectral functions.
 
 ## The Stochastic Analytic Continuation (SAC) Method
-TThis library contains code for solving the challenging inverse problem of numerical analytic continuation using the Stochastic Analytic Continuation (SAC) method. Provided with QMC-generated imaginary time correlation function data G(τ), the SAC method will generate a spectral function S(ω) satisfying the integral
+This library contains code for solving the challenging inverse problem of numerical analytic continuation using the Stochastic Analytic Continuation (SAC) method. Provided with QMC-generated imaginary time correlation function data G(τ), the SAC method will generate a spectral function S(ω) satisfying the integral
 
 $$G(\tau) = \int_{\infty}^{\infty} K(\tau, \omega) S(\omega),$$
 
